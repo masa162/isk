@@ -59,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })
 
       // R2の公開URLを返す
-      const publicUrl = `https://pub-YOUR_R2_SUBDOMAIN.r2.dev/${fileKey}`
+      const publicUrl = `https://isk-media.masa86.com/${fileKey}`
       return res.status(200).json({ url: publicUrl, key: fileKey })
     } else {
       // Edge環境ではローカルファイルシステムにアクセスできないため、
