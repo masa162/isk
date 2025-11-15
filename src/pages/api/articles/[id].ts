@@ -3,12 +3,19 @@ import type { NextRequest } from 'next/server'
 
 export const runtime = 'edge'
 
-export default async function handler(req: NextRequest, context: { params: { id: string } } & any) {
+export default async function handler(req: NextRequest, context?: any) {
   try {
-    const { id } = context.params
+    // Extract ID from URL path
+    const url = new URL(req.url)
+    const pathParts = url.pathname.split('/')
+    const id = pathParts[pathParts.length - 1]
+
+    if (!id) {
+      return Response.json({ error: 'Article ID is required' }, { status: 400 })
+    }
 
     // Access Cloudflare bindings directly from the request context
-    const env = context.env || process.env
+    const env = context?.env || process.env
 
     if (!env || !env.DB) {
       console.error('Environment or DB binding not available:', {
