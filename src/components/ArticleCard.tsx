@@ -33,8 +33,8 @@ export default function ArticleCard({ article }: ArticleCardProps) {
               #{tag}
             </span>
           ))}
-          <span className="text-gray-500 ml-auto">
-            {new Date(article.published_at || article.created_at).toLocaleDateString('ja-JP')}
+          <span className="text-gray-500 ml-auto" suppressHydrationWarning>
+            {new Date(article.created_at).toLocaleDateString('ja-JP')}
           </span>
         </div>
       </div>

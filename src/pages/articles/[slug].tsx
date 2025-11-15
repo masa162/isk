@@ -93,8 +93,8 @@ export default function ArticlePage() {
               </h1>
 
               <div className="flex items-center gap-4 text-sm text-gray-600">
-                <time dateTime={article.published_at || article.created_at}>
-                  {new Date(article.published_at || article.created_at).toLocaleDateString('ja-JP', {
+                <time suppressHydrationWarning>
+                  {new Date(article.created_at).toLocaleDateString('ja-JP', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
