@@ -1,14 +1,14 @@
 import { ArticleRepository } from '@/lib/db'
 import type { Env } from '@/types/env'
 import type { NextRequest } from 'next/server'
+import { getRequestContext } from '@cloudflare/next-on-pages'
 
 export const runtime = 'edge'
 
 export default async function handler(req: NextRequest, context: { params: { id: string } }) {
   const { id } = context.params
-  // @ts-ignore - Cloudflare Pages環境でのみ利用可能
-  const env = process.env as unknown as Env
-  const repo = new ArticleRepository(env?.DB)
+  const { env } = getRequestContext()
+  const repo = new ArticleRepository(env.DB)
 
   // IDまたはslugで取得
   const idOrSlug = isNaN(Number(id)) ? id : Number(id)

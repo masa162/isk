@@ -1,5 +1,6 @@
 import type { Env } from '@/types/env'
 import type { NextRequest } from 'next/server'
+import { getRequestContext } from '@cloudflare/next-on-pages'
 
 export const runtime = 'edge'
 
@@ -14,12 +15,11 @@ export default async function handler(req: NextRequest) {
     return Response.json({ error: 'Method not allowed' }, { status: 405 })
   }
 
-  // @ts-ignore - Cloudflare Pages環境でのみ利用可能
-  const env = process.env as unknown as Env
+  const { env } = getRequestContext()
 
   try {
     console.log('Upload handler - env:', env ? 'present' : 'missing')
-    console.log('Upload handler - R2:', env?.R2 ? 'present' : 'missing')
+    console.log('Upload handler - R2:', env.R2 ? 'present' : 'missing')
 
     const contentType = req.headers.get('content-type') || ''
 
@@ -49,8 +49,8 @@ export default async function handler(req: NextRequest) {
     const fileName = `${Date.now()}-${file.name}`
     const fileKey = `media/${fileName}`
 
-    if (!env?.R2) {
-      console.error('R2 binding not found. Available env keys:', Object.keys(env || {}))
+    if (!env.R2) {
+      console.error('R2 binding not found. Available env keys:', Object.keys(env))
       return Response.json({
         error: 'R2 storage not configured',
         message: 'R2バインディングが設定されていません。Cloudflare Dashboardで設定を確認してください。'
