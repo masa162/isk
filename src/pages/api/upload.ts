@@ -1,5 +1,4 @@
 import type { NextRequest } from 'next/server'
-import { getRequestContext } from '@cloudflare/next-on-pages'
 
 export const runtime = 'edge'
 
@@ -9,16 +8,17 @@ export const config = {
   },
 }
 
-export default async function handler(req: NextRequest) {
+export default async function handler(req: NextRequest, context?: any) {
   if (req.method !== 'POST') {
     return Response.json({ error: 'Method not allowed' }, { status: 405 })
   }
 
-  const { env } = getRequestContext()
-
   try {
+    // Access Cloudflare bindings directly from the request context
+    const env = context?.env || process.env
+
     console.log('Upload handler - env:', env ? 'present' : 'missing')
-    console.log('Upload handler - R2:', env.R2 ? 'present' : 'missing')
+    console.log('Upload handler - R2:', env?.R2 ? 'present' : 'missing')
 
     const contentType = req.headers.get('content-type') || ''
 
@@ -48,11 +48,15 @@ export default async function handler(req: NextRequest) {
     const fileName = `${Date.now()}-${file.name}`
     const fileKey = `media/${fileName}`
 
-    if (!env.R2) {
-      console.error('R2 binding not found. Available env keys:', Object.keys(env))
+    if (!env || !env.R2) {
+      console.error('R2 binding not found. Available env keys:', env ? Object.keys(env) : [])
       return Response.json({
         error: 'R2 storage not configured',
-        message: 'R2バインディングが設定されていません。Cloudflare Dashboardで設定を確認してください。'
+        message: 'R2バインディングが設定されていません。Cloudflare Dashboardで設定を確認してください。',
+        debug: {
+          hasEnv: !!env,
+          hasR2: !!env?.R2
+        }
       }, { status: 500 })
     }
 
@@ -68,6 +72,10 @@ export default async function handler(req: NextRequest) {
     return Response.json({ url: publicUrl, key: fileKey }, { status: 200 })
   } catch (error: any) {
     console.error('Upload error:', error)
-    return Response.json({ error: 'Upload failed', message: error.message }, { status: 500 })
+    return Response.json({
+      error: 'Upload failed',
+      message: error.message,
+      stack: error.stack
+    }, { status: 500 })
   }
 }

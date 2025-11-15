@@ -1,19 +1,28 @@
 import { ArticleRepository } from '@/lib/db'
 import type { NextRequest } from 'next/server'
-import { getRequestContext } from '@cloudflare/next-on-pages'
 
 export const runtime = 'edge'
 
-export default async function handler(req: NextRequest, context: { params: { id: string } }) {
+export default async function handler(req: NextRequest, context: { params: { id: string } } & any) {
   try {
     const { id } = context.params
-    const { env } = getRequestContext()
+
+    // Access Cloudflare bindings directly from the request context
+    const env = context.env || process.env
 
     if (!env || !env.DB) {
-      console.error('Environment or DB binding not available:', { env: !!env, DB: !!env?.DB })
+      console.error('Environment or DB binding not available:', {
+        hasEnv: !!env,
+        hasDB: !!env?.DB,
+        envKeys: env ? Object.keys(env) : []
+      })
       return Response.json({
         error: 'Database not configured',
-        details: 'DB binding is not available'
+        details: 'DB binding is not available',
+        debug: {
+          hasEnv: !!env,
+          hasDB: !!env?.DB
+        }
       }, { status: 500 })
     }
 
