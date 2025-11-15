@@ -22,20 +22,28 @@ export default function ArticlePage() {
 
   const loadArticle = async () => {
     try {
+      console.log('[ArticlePage] Loading article with slug:', slug)
       const res = await fetch(`/api/articles/${slug}`)
+      console.log('[ArticlePage] Response status:', res.status)
+
       if (res.ok) {
         const data = await res.json() as Article
+        console.log('[ArticlePage] Article data:', data)
+        console.log('[ArticlePage] Published status:', data.published, typeof data.published)
+
         // 公開記事のみ表示
         if (data.published) {
           setArticle(data)
         } else {
+          console.log('[ArticlePage] Article not published, redirecting to home')
           router.push('/')
         }
       } else {
+        console.log('[ArticlePage] Response not OK, redirecting to home')
         router.push('/')
       }
     } catch (error) {
-      console.error('Failed to load article:', error)
+      console.error('[ArticlePage] Failed to load article:', error)
       router.push('/')
     } finally {
       setLoading(false)

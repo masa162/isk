@@ -213,10 +213,15 @@ export class ArticleRepository {
 
   // ヘルパー: DBレコードをArticle型に変換
   private parseArticle(record: any): Article {
+    // is_published カラムとの互換性を保つ
+    const publishedValue = record.published !== undefined ? record.published : record.is_published
+    console.log('[parseArticle] record:', record)
+    console.log('[parseArticle] published value:', publishedValue, 'type:', typeof publishedValue)
+
     return {
       ...record,
       tags: record.tags ? JSON.parse(record.tags) : [],
-      published: Boolean(record.published),
+      published: Boolean(publishedValue),
     }
   }
 }

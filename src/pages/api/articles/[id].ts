@@ -15,7 +15,11 @@ export default async function handler(req: NextRequest, context: { params: { id:
 
   if (req.method === 'GET') {
     // 記事取得
+    console.log('[API] Getting article with idOrSlug:', idOrSlug)
     const article = await repo.get(idOrSlug)
+    console.log('[API] Article found:', article)
+    console.log('[API] Article published status:', article?.published, typeof article?.published)
+
     if (!article) {
       return Response.json({ error: 'Article not found' }, { status: 404 })
     }
