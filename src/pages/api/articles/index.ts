@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { ArticleRepository } from '@/lib/db'
 import type { Env } from '@/types/env'
 
+export const runtime = 'edge'
+
 // @ts-ignore - Cloudflare環境でのみ利用可能
 const getEnv = (req: NextApiRequest): Env | undefined => {
   return (req as any).env

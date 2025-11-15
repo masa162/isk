@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import formidable from 'formidable'
-import fs from 'fs'
 import type { Env } from '@/types/env'
+
+export const runtime = 'edge'
 
 export const config = {
   api: {
@@ -21,30 +21,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const env = getEnv(req)
 
   try {
-    const form = formidable({
-      maxFileSize: 50 * 1024 * 1024, // 50MB
-      filter: ({ mimetype }) => {
-        // MP3, 画像のみ許可
-        return mimetype?.includes('audio/') || mimetype?.includes('image/') || false
-      },
-    })
+    // Edge Runtimeではformidableが使えないため、Request APIを使用
+    const contentType = req.headers['content-type'] || ''
 
-    const [fields, files] = await form.parse(req)
-    const file = Array.isArray(files.file) ? files.file[0] : files.file
+    if (!contentType.includes('multipart/form-data')) {
+      return res.status(400).json({ error: 'Content-Type must be multipart/form-data' })
+    }
+
+    // FormDataとして解析
+    const formData = await (req as any).formData()
+    const file = formData.get('file') as File | null
 
     if (!file) {
       return res.status(400).json({ error: 'No file uploaded' })
     }
 
-    const fileBuffer = fs.readFileSync(file.filepath)
-    const fileName = `${Date.now()}-${file.originalFilename}`
+    // ファイルサイズチェック (50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      return res.status(400).json({ error: 'File size exceeds 50MB limit' })
+    }
+
+    // MIMEタイプチェック
+    if (!file.type.includes('audio/') && !file.type.includes('image/')) {
+      return res.status(400).json({ error: 'Only audio and image files are allowed' })
+    }
+
+    const fileBuffer = await file.arrayBuffer()
+    const fileName = `${Date.now()}-${file.name}`
     const fileKey = `media/${fileName}`
 
     if (env?.R2) {
       // 本番環境: Cloudflare R2にアップロード
       await env.R2.put(fileKey, fileBuffer, {
         httpMetadata: {
-          contentType: file.mimetype || 'application/octet-stream',
+          contentType: file.type || 'application/octet-stream',
         },
       })
 
@@ -52,17 +62,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const publicUrl = `https://pub-YOUR_R2_SUBDOMAIN.r2.dev/${fileKey}`
       return res.status(200).json({ url: publicUrl, key: fileKey })
     } else {
-      // ローカル開発: public/uploadsに保存
-      const uploadDir = 'public/uploads'
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true })
-      }
-
-      const localPath = `${uploadDir}/${fileName}`
-      fs.writeFileSync(localPath, fileBuffer)
-
-      const localUrl = `/uploads/${fileName}`
-      return res.status(200).json({ url: localUrl, key: fileKey })
+      // Edge環境ではローカルファイルシステムにアクセスできないため、
+      // 開発環境ではR2を使用するか、別のストレージサービスを利用する必要があります
+      return res.status(501).json({
+        error: 'File upload requires R2 configuration',
+        message: 'Please configure Cloudflare R2 for file uploads'
+      })
     }
   } catch (error: any) {
     console.error('Upload error:', error)
