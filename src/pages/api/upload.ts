@@ -1,4 +1,3 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import type { Env } from '@/types/env'
 
 export const runtime = 'edge'
@@ -9,41 +8,36 @@ export const config = {
   },
 }
 
-const getEnv = (req: NextApiRequest): Env | undefined => {
-  return (req as any).env
-}
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: Request, context: { env: Env }) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
+    return Response.json({ error: 'Method not allowed' }, { status: 405 })
   }
 
-  const env = getEnv(req)
+  const env = context.env
 
   try {
-    // Edge Runtimeではformidableが使えないため、Request APIを使用
-    const contentType = req.headers['content-type'] || ''
+    const contentType = req.headers.get('content-type') || ''
 
     if (!contentType.includes('multipart/form-data')) {
-      return res.status(400).json({ error: 'Content-Type must be multipart/form-data' })
+      return Response.json({ error: 'Content-Type must be multipart/form-data' }, { status: 400 })
     }
 
     // FormDataとして解析
-    const formData = await (req as any).formData()
+    const formData = await req.formData()
     const file = formData.get('file') as File | null
 
     if (!file) {
-      return res.status(400).json({ error: 'No file uploaded' })
+      return Response.json({ error: 'No file uploaded' }, { status: 400 })
     }
 
     // ファイルサイズチェック (50MB)
     if (file.size > 50 * 1024 * 1024) {
-      return res.status(400).json({ error: 'File size exceeds 50MB limit' })
+      return Response.json({ error: 'File size exceeds 50MB limit' }, { status: 400 })
     }
 
     // MIMEタイプチェック
     if (!file.type.includes('audio/') && !file.type.includes('image/')) {
-      return res.status(400).json({ error: 'Only audio and image files are allowed' })
+      return Response.json({ error: 'Only audio and image files are allowed' }, { status: 400 })
     }
 
     const fileBuffer = await file.arrayBuffer()
@@ -60,17 +54,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // R2の公開URLを返す
       const publicUrl = `https://isk-media.masa86.com/${fileKey}`
-      return res.status(200).json({ url: publicUrl, key: fileKey })
+      return Response.json({ url: publicUrl, key: fileKey }, { status: 200 })
     } else {
       // Edge環境ではローカルファイルシステムにアクセスできないため、
       // 開発環境ではR2を使用するか、別のストレージサービスを利用する必要があります
-      return res.status(501).json({
+      return Response.json({
         error: 'File upload requires R2 configuration',
         message: 'Please configure Cloudflare R2 for file uploads'
-      })
+      }, { status: 501 })
     }
   } catch (error: any) {
     console.error('Upload error:', error)
-    return res.status(500).json({ error: 'Upload failed', message: error.message })
+    return Response.json({ error: 'Upload failed', message: error.message }, { status: 500 })
   }
 }
