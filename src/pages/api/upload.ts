@@ -16,6 +16,9 @@ export default async function handler(req: Request, context: { env: Env }) {
   const env = context.env
 
   try {
+    console.log('Upload handler - env:', env ? 'present' : 'missing')
+    console.log('Upload handler - R2:', env?.R2 ? 'present' : 'missing')
+
     const contentType = req.headers.get('content-type') || ''
 
     if (!contentType.includes('multipart/form-data')) {
