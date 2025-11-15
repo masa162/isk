@@ -1,16 +1,17 @@
 name = "isuku"
 compatibility_date = "2024-11-15"
+pages_build_output_dir = ".next"
 
 # D1 データベース
 [[d1_databases]]
 binding = "DB"
-database_name = "isuku-db"
-database_id = "" # wrangler d1 create isuku-db で取得後に設定
+database_name = "isk-db"
+database_id = "cafa2521-13d3-4ecd-b2dc-99837877487d"
 
 # R2 バケット
 [[r2_buckets]]
 binding = "R2"
-bucket_name = "isuku-media"
+bucket_name = "isk-media"
 
 # 環境変数
 [vars]
