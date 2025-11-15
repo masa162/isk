@@ -14,7 +14,7 @@ export default function AdminDashboard() {
   const loadArticles = async () => {
     try {
       const res = await fetch('/api/articles')
-      const data = await res.json()
+      const data = await res.json() as Article[]
       setArticles(data)
     } catch (error) {
       console.error('Failed to load articles:', error)

@@ -30,7 +30,7 @@ export default function EditArticle() {
   const loadArticle = async () => {
     try {
       const res = await fetch(`/api/articles/${id}`)
-      const data = await res.json()
+      const data = await res.json() as Article
       setArticle(data)
       setTagInput(data.tags?.join(', ') || '')
     } catch (error) {
@@ -60,7 +60,7 @@ export default function EditArticle() {
         alert('保存しました')
         router.push('/admin')
       } else {
-        const error = await res.json()
+        const error = await res.json() as { error: string }
         alert(`保存に失敗しました: ${error.error}`)
       }
     } catch (error) {
@@ -85,7 +85,7 @@ export default function EditArticle() {
         body: formData,
       })
 
-      const data = await res.json()
+      const data = await res.json() as { url?: string; error?: string }
       if (res.ok) {
         setArticle({ ...article, audio_url: data.url })
         alert('アップロードしました')

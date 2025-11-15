@@ -42,6 +42,8 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251115.0",
+    "@tailwindcss/postcss": "^4.1.17",
     "@types/formidable": "^3.4.6",
     "wrangler": "^4.47.0"
   }

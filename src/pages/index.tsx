@@ -24,7 +24,7 @@ export default function Home() {
       if (selectedCategory) params.append('category', selectedCategory)
 
       const res = await fetch(`/api/articles?${params}`)
-      const data = await res.json()
+      const data = await res.json() as Article[]
       setArticles(data)
     } catch (error) {
       console.error('Failed to load articles:', error)

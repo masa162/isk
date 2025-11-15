@@ -24,7 +24,7 @@ export default function ArticlePage() {
     try {
       const res = await fetch(`/api/articles/${slug}`)
       if (res.ok) {
-        const data = await res.json()
+        const data = await res.json() as Article
         // 公開記事のみ表示
         if (data.published) {
           setArticle(data)
