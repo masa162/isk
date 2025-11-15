@@ -1,4 +1,5 @@
 import type { Env } from '@/types/env'
+import type { NextRequest } from 'next/server'
 
 export const runtime = 'edge'
 
@@ -8,12 +9,13 @@ export const config = {
   },
 }
 
-export default async function handler(req: Request, context: { env: Env }) {
+export default async function handler(req: NextRequest) {
   if (req.method !== 'POST') {
     return Response.json({ error: 'Method not allowed' }, { status: 405 })
   }
 
-  const env = context.env
+  // @ts-ignore - Cloudflare Pages環境でのみ利用可能
+  const env = process.env as unknown as Env
 
   try {
     console.log('Upload handler - env:', env ? 'present' : 'missing')
