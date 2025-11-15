@@ -1,5 +1,6 @@
 import type { Env } from '@/types/env'
 import type { NextRequest } from 'next/server'
+import { getRequestContext } from '@cloudflare/next-on-pages'
 
 export const runtime = 'edge'
 
@@ -14,8 +15,16 @@ export default async function handler(req: NextRequest) {
     return Response.json({ error: 'Method not allowed' }, { status: 405 })
   }
 
-  // @ts-ignore - Cloudflare Pages環境でのみ利用可能
-  const env = process.env as unknown as Env
+  // Cloudflare Pagesの環境変数とバインディングを取得
+  let env: Env | undefined
+  try {
+    const ctx = getRequestContext()
+    env = ctx.env as Env
+  } catch (e) {
+    // ローカル開発環境では getRequestContext() が使えないので、フォールバック
+    console.log('Running in local dev mode (no Cloudflare context)')
+    env = undefined
+  }
 
   try {
     console.log('Upload handler - env:', env ? 'present' : 'missing')

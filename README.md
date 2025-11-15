@@ -90,8 +90,8 @@ npx wrangler r2 bucket create isuku-media
 1. GitHubリポジトリをCloudflare Pagesに連携
 2. ビルド設定:
    - **Framework preset**: Next.js
-   - **Build command**: `npm run build`
-   - **Build output directory**: `.next`
+   - **Build command**: `npm run pages:build`
+   - **Build output directory**: `.vercel/output/static`
    - **Node version**: 20
 
 3. 環境変数を設定:
@@ -128,11 +128,19 @@ npx wrangler r2 bucket create isuku-media
 └── package.json
 \`\`\`
 
+## ビルドについて
+
+このプロジェクトは `@cloudflare/next-on-pages` を使用してCloudflare Pages向けにビルドされます:
+
+- **ローカルビルド**: `npm run build` (通常のNext.jsビルド)
+- **Cloudflare Pages用ビルド**: `npm run pages:build`
+- **ローカルプレビュー**: `npm run preview` (wranglerを使用)
+
 ## 注意事項
 
-- Next.js 16を使用していますが、`@cloudflare/next-on-pages`はまだ対応していません
-- 本番環境では Cloudflare Pages の Next.js ランタイムを利用します
+- Cloudflare D1/R2のバインディングは `getRequestContext()` 経由でアクセスします
 - ローカル開発では、D1/R2へのアクセスはモック実装となっています
+- 本番環境では、Cloudflare Pagesの設定でD1/R2バインディングを必ず設定してください
 
 ## ライセンス
 
