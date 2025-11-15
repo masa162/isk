@@ -5,3 +5,8 @@ export interface Env {
   ADMIN_USERNAME: string
   ADMIN_PASSWORD: string
 }
+
+// Augment CloudflareEnv type for @cloudflare/next-on-pages
+declare module '@cloudflare/next-on-pages' {
+  interface CloudflareEnv extends Env {}
+}
