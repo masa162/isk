@@ -13,6 +13,7 @@ export default function ArticlePage() {
 
   const [article, setArticle] = useState<Article | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (slug) {
@@ -29,14 +30,16 @@ export default function ArticlePage() {
         if (data.published) {
           setArticle(data)
         } else {
-          router.push('/')
+          setError('この記事は現在非公開です。')
         }
+      } else if (res.status === 404) {
+        setError('記事が見つかりませんでした。')
       } else {
-        router.push('/')
+        setError('記事の読み込みに失敗しました。')
       }
     } catch (error) {
       console.error('Failed to load article:', error)
-      router.push('/')
+      setError('記事の読み込み中にエラーが発生しました。')
     } finally {
       setLoading(false)
     }
@@ -47,6 +50,48 @@ export default function ArticlePage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <p className="text-gray-500">読み込み中...</p>
       </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <>
+        <Head>
+          <title>エラー - isuku</title>
+        </Head>
+        <div className="min-h-screen bg-gray-50">
+          <header className="bg-white shadow-sm border-b">
+            <div className="container mx-auto px-4 py-4">
+              <Link href="/" className="text-2xl font-bold text-gray-900 hover:text-blue-600">
+                ← isuku
+              </Link>
+            </div>
+          </header>
+          <main className="container mx-auto px-4 py-16">
+            <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8 text-center">
+              <div className="mb-6">
+                <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                {error}
+              </h1>
+              <p className="text-gray-600 mb-8">
+                {error === 'この記事は現在非公開です。'
+                  ? '記事を公開するには、管理画面から記事を編集して「この記事を公開する」にチェックを入れてください。'
+                  : 'お探しの記事が見つからないか、削除された可能性があります。'}
+              </p>
+              <Link
+                href="/"
+                className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+              >
+                記事一覧に戻る
+              </Link>
+            </div>
+          </main>
+        </div>
+      </>
     )
   }
 
