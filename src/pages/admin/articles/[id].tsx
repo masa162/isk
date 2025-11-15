@@ -10,7 +10,7 @@ export default function EditArticle() {
 
   const [article, setArticle] = useState<Partial<Article>>({
     title: '',
-    slug: '',
+    slug: `article-${Date.now()}`,
     content: '',
     excerpt: '',
     category: '',
@@ -48,6 +48,8 @@ export default function EditArticle() {
       const tags = tagInput.split(',').map(t => t.trim()).filter(Boolean)
       const payload = { ...article, tags }
 
+      console.log('Submitting article:', payload)
+
       const url = id === 'new' ? '/api/articles' : `/api/articles/${id}`
       const method = id === 'new' ? 'POST' : 'PUT'
 
@@ -57,16 +59,26 @@ export default function EditArticle() {
         body: JSON.stringify(payload),
       })
 
+      console.log('Response status:', res.status)
+
       if (res.ok) {
         alert('保存しました')
         router.push('/admin')
       } else {
-        const error = await res.json() as { error: string }
-        alert(`保存に失敗しました: ${error.error}`)
+        const errorText = await res.text()
+        console.error('Error response:', errorText)
+        let errorMessage = '保存に失敗しました'
+        try {
+          const errorData = JSON.parse(errorText)
+          errorMessage = `保存に失敗しました: ${errorData.error || errorData.message || errorText}`
+        } catch {
+          errorMessage = `保存に失敗しました: ${errorText}`
+        }
+        alert(errorMessage)
       }
     } catch (error) {
       console.error('Failed to save article:', error)
-      alert('保存に失敗しました')
+      alert(`保存に失敗しました: ${error instanceof Error ? error.message : String(error)}`)
     } finally {
       setLoading(false)
     }
@@ -318,7 +330,7 @@ export default function EditArticle() {
                     </div>
                     <input
                       type="file"
-                      accept="audio/mp3,audio/mpeg"
+                      accept="audio/mp3,audio/mpeg,audio/mp4,audio/m4a,audio/x-m4a,audio/aac"
                       onChange={handleFileUpload}
                       disabled={uploading}
                       className="hidden"
@@ -332,7 +344,7 @@ export default function EditArticle() {
                   </div>
                 )}
                 <p className="mt-2 text-xs text-gray-500">
-                  MP3形式、最大50MB。Podcast配信にも使用されます。
+                  MP3、AAC、M4A形式、最大50MB。Podcast配信にも使用されます。
                 </p>
               </div>
             </div>
