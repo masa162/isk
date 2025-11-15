@@ -6,7 +6,7 @@ export interface Env {
   ADMIN_PASSWORD: string
 }
 
-// Augment CloudflareEnv type for @cloudflare/next-on-pages
-declare module '@cloudflare/next-on-pages' {
+// Augment CloudflareEnv in global scope for @cloudflare/next-on-pages
+declare global {
   interface CloudflareEnv extends Env {}
 }
