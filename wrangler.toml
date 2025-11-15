@@ -1,0 +1,17 @@
+name = "isuku"
+compatibility_date = "2024-11-15"
+
+# D1 データベース
+[[d1_databases]]
+binding = "DB"
+database_name = "isuku-db"
+database_id = "" # wrangler d1 create isuku-db で取得後に設定
+
+# R2 バケット
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "isuku-media"
+
+# 環境変数
+[vars]
+NEXT_PUBLIC_SITE_URL = "http://localhost:3000"
