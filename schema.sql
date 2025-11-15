@@ -3,12 +3,11 @@ CREATE TABLE IF NOT EXISTS articles (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT UNIQUE NOT NULL,
   title TEXT NOT NULL,
-  description TEXT,
+  excerpt TEXT,
   content TEXT NOT NULL,
   category TEXT,
   tags TEXT, -- JSON array stored as text
   audio_url TEXT,
-  thumbnail_url TEXT,
   published BOOLEAN DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP

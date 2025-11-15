@@ -54,21 +54,12 @@ export class ArticleRepository {
       bindings.push(category)
     }
     if (q) {
-      // FTS検索を使用
-      const ftsResult = await this.db
-        .prepare('SELECT rowid FROM articles_fts WHERE articles_fts MATCH ?')
-        .bind(q)
-        .all()
-
-      if (ftsResult.results.length > 0) {
-        const ids = ftsResult.results.map((r: any) => r.rowid).join(',')
-        sql += ` AND id IN (${ids})`
-      } else {
-        return []
-      }
+      // 簡易検索（LIKE）
+      sql += ' AND (title LIKE ? OR content LIKE ?)'
+      bindings.push(`%${q}%`, `%${q}%`)
     }
 
-    sql += ' ORDER BY published_at DESC, created_at DESC LIMIT ? OFFSET ?'
+    sql += ' ORDER BY created_at DESC LIMIT ? OFFSET ?'
     bindings.push(limit, offset)
 
     const result = await this.db.prepare(sql).bind(...bindings).all()
@@ -114,8 +105,8 @@ export class ArticleRepository {
 
     const result = await this.db
       .prepare(`
-        INSERT INTO articles (title, slug, content, excerpt, category, tags, audio_url, published, published_at, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO articles (title, slug, content, excerpt, category, tags, audio_url, published, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
       .bind(
         input.title,
@@ -126,7 +117,6 @@ export class ArticleRepository {
         tags,
         input.audio_url || null,
         input.published ? 1 : 0,
-        input.published ? now : null,
         now,
         now
       )
@@ -192,10 +182,6 @@ export class ArticleRepository {
     if (input.published !== undefined) {
       updates.push('published = ?')
       bindings.push(input.published ? 1 : 0)
-      if (input.published && !existing.published) {
-        updates.push('published_at = ?')
-        bindings.push(now)
-      }
     }
 
     updates.push('updated_at = ?')
