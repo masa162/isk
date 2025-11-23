@@ -4,7 +4,7 @@ import type { Article } from '../types'
  * JSON-LD 構造化データを生成
  */
 export function generateArticleJsonLd(article: Article, siteUrl: string) {
-  return {
+  const jsonLd: any = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: article.title,
@@ -27,10 +27,18 @@ export function generateArticleJsonLd(article: Article, siteUrl: string) {
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `${siteUrl}/articles/${article.slug}`
-    },
-    ...(article.category && { articleSection: article.category }),
-    ...(article.tags && { keywords: article.tags.join(', ') })
+    }
   }
+
+  if (article.category) {
+    jsonLd.articleSection = article.category
+  }
+
+  if (article.tags && article.tags.length > 0) {
+    jsonLd.keywords = article.tags.join(', ')
+  }
+
+  return jsonLd
 }
 
 /**
