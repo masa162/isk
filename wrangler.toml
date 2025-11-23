@@ -1,0 +1,23 @@
+name = "iskn"
+compatibility_date = "2024-11-23"
+main = "src/index.tsx"
+
+# D1 データベース（既存のデータベースを使用）
+[[d1_databases]]
+binding = "DB"
+database_name = "isk-db"
+database_id = "cafa2521-13d3-4ecd-b2dc-99837877487d"
+
+# R2 バケット（既存のバケットを使用）
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "isk-media"
+
+# 環境変数
+[vars]
+SITE_URL = "https://isk.masa86.com"
+R2_PUBLIC_URL = "https://isk-media.masa86.com"
+
+# 本番環境用の秘密情報（wrangler secret put コマンドで設定）
+# ADMIN_USERNAME
+# ADMIN_PASSWORD
