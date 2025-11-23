@@ -235,6 +235,77 @@ app.get('/styles.css', (c) => {
       text-decoration: underline;
     }
 
+    /* ハンバーガーメニューボタン */
+    .hamburger-btn {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+    }
+
+    .hamburger-btn:hover {
+      background: #f5f5f5;
+    }
+
+    /* モバイルオーバーレイ */
+    .mobile-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .mobile-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ページトップボタン */
+    .page-top-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      z-index: 100;
+    }
+
+    .page-top-btn.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .page-top-btn:hover {
+      background: #0052a3;
+      transform: translateY(-3px);
+    }
+
     /* レスポンシブ対応 */
     @media (max-width: 1024px) {
       .app-layout {
@@ -245,7 +316,25 @@ app.get('/styles.css', (c) => {
         grid-template-columns: 1fr;
       }
 
-      .left-sidebar,
+      .hamburger-btn {
+        display: block;
+      }
+
+      .left-sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        height: 100vh;
+        width: 260px;
+        z-index: 1000;
+        transition: left 0.3s;
+        overflow-y: auto;
+      }
+
+      .left-sidebar.mobile-open {
+        left: 0;
+      }
+
       .right-toc {
         display: none;
       }

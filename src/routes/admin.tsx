@@ -112,9 +112,22 @@ adminRoute.get('/articles/new', (c) => {
 
             <div style="margin-bottom: 20px;">
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">スラグ（URL）*</label>
-              <input type="text" name="slug" required placeholder="article-slug" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-              <small style="color: #666;">半角英数字とハイフンのみ</small>
+              <div style="display: flex; gap: 10px;">
+                <input type="text" id="slug-input" name="slug" required placeholder="article-slug" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                <button type="button" onclick="generateSlug()" style="background: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">自動生成</button>
+              </div>
+              <small style="color: #666;">半角英数字5桁（自動生成推奨）</small>
             </div>
+            <script>
+              function generateSlug() {
+                const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+                let slug = '';
+                for (let i = 0; i < 5; i++) {
+                  slug += chars[Math.floor(Math.random() * chars.length)];
+                }
+                document.getElementById('slug-input').value = slug;
+              }
+            </script>
 
             <div style="margin-bottom: 20px;">
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">カテゴリ</label>

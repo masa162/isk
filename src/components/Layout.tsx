@@ -89,7 +89,15 @@ export const Layout: FC<LayoutProps> = ({
         )}
       </head>
       <body>
-        <div class="app-layout">
+        {/* ハンバーガーメニューボタン（スマホのみ表示） */}
+        <button id="hamburger-btn" class="hamburger-btn" onclick="toggleMobileMenu()">
+          ☰
+        </button>
+
+        {/* モバイルメニューオーバーレイ */}
+        <div id="mobile-overlay" class="mobile-overlay" onclick="toggleMobileMenu()"></div>
+
+        <div class="app-layout" id="app-layout">
           <LeftSidebar />
 
           <main class="main-content">
@@ -107,6 +115,47 @@ export const Layout: FC<LayoutProps> = ({
             <p><a href="/disclaimer">免責事項・利用規約</a></p>
           </div>
         </footer>
+
+        {/* ページトップボタン */}
+        <button id="page-top-btn" class="page-top-btn" onclick="scrollToTop()">
+          ↑
+        </button>
+
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            // ハンバーガーメニュー制御
+            function toggleMobileMenu() {
+              const sidebar = document.querySelector('.left-sidebar');
+              const overlay = document.getElementById('mobile-overlay');
+              const isOpen = sidebar.classList.contains('mobile-open');
+
+              if (isOpen) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+              } else {
+                sidebar.classList.add('mobile-open');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+              }
+            }
+
+            // ページトップボタンの表示制御
+            window.addEventListener('scroll', function() {
+              const btn = document.getElementById('page-top-btn');
+              if (window.scrollY > 300) {
+                btn.classList.add('visible');
+              } else {
+                btn.classList.remove('visible');
+              }
+            });
+
+            // ページトップへスクロール
+            function scrollToTop() {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          `
+        }}></script>
       </body>
     </html>
   )
