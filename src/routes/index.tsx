@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import type { Env } from '../types'
 import { Layout } from '../components/Layout'
 import { ArticleRepository } from '../db/articles'
+import { generateWebsiteJsonLd } from '../utils/seo'
 
 export const indexRoute = new Hono<{ Bindings: Env }>()
 
@@ -10,8 +11,17 @@ indexRoute.get('/', async (c) => {
   const articles = await repo.list({ published: true, limit: 20 })
   const categories = await repo.getCategories()
 
+  const siteUrl = 'https://isk.masa86.com'
+  const jsonLd = generateWebsiteJsonLd(siteUrl)
+
   return c.html(
-    <Layout title="ホーム">
+    <Layout
+      title="ホーム"
+      description="薬剤師による医学記事解説 + Podcast。エビデンスに基づいた分かりやすい医学情報をお届けします。"
+      url={siteUrl}
+      jsonLd={jsonLd}
+      ga4MeasurementId={c.env.GA4_MEASUREMENT_ID}
+    >
       <h2>最新記事</h2>
 
       {categories.length > 0 && (

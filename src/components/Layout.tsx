@@ -8,16 +8,85 @@ type LayoutProps = {
   children: any
   showTOC?: boolean
   tocItems?: TOCItem[]
+  description?: string
+  ogImage?: string
+  url?: string
+  type?: 'website' | 'article'
+  publishedTime?: string
+  modifiedTime?: string
+  jsonLd?: object
+  ga4MeasurementId?: string
 }
 
-export const Layout: FC<LayoutProps> = ({ title, children, showTOC = false, tocItems = [] }) => {
+export const Layout: FC<LayoutProps> = ({
+  title,
+  children,
+  showTOC = false,
+  tocItems = [],
+  description = '薬剤師による医学記事解説 + Podcast',
+  ogImage = 'https://isk.masa86.com/og-default.png',
+  url = 'https://isk.masa86.com',
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  jsonLd,
+  ga4MeasurementId
+}) => {
+  const fullTitle = `${title} - 医スク！`
+
   return (
     <html lang="ja">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{title} - 医スク！</title>
+        <title>{fullTitle}</title>
+        <meta name="description" content={description} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content={type} />
+        <meta property="og:url" content={url} />
+        <meta property="og:title" content={fullTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:site_name" content="医スク！" />
+        <meta property="og:locale" content="ja_JP" />
+        {type === 'article' && publishedTime && (
+          <meta property="article:published_time" content={publishedTime} />
+        )}
+        {type === 'article' && modifiedTime && (
+          <meta property="article:modified_time" content={modifiedTime} />
+        )}
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={url} />
+        <meta name="twitter:title" content={fullTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+
+        {/* JSON-LD Structured Data */}
+        {jsonLd && (
+          <script type="application/ld+json">
+            {JSON.stringify(jsonLd)}
+          </script>
+        )}
+
         <link rel="stylesheet" href="/styles.css" />
+
+        {/* Google Analytics 4 */}
+        {ga4MeasurementId && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${ga4MeasurementId}`}></script>
+            <script dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${ga4MeasurementId}');
+              `
+            }}></script>
+          </>
+        )}
       </head>
       <body>
         <div class="app-layout">

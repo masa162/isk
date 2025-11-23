@@ -17,6 +17,7 @@ bucket_name = "isk-media"
 [vars]
 SITE_URL = "https://isk.masa86.com"
 R2_PUBLIC_URL = "https://isk-media.masa86.com"
+GA4_MEASUREMENT_ID = "G-XXXXXXXXXX"
 
 # 本番環境用の秘密情報（wrangler secret put コマンドで設定）
 # ADMIN_USERNAME

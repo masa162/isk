@@ -4,6 +4,7 @@ import { Layout } from '../components/Layout'
 import { ArticleRepository } from '../db/articles'
 import MarkdownIt from 'markdown-it'
 import { extractHeadings, addHeadingIds } from '../utils/toc'
+import { generateArticleJsonLd, truncateDescription } from '../utils/seo'
 
 const md = new MarkdownIt({
   html: true,
@@ -27,7 +28,12 @@ articlesRoute.get('/', async (c) => {
   })
 
   return c.html(
-    <Layout title="記事一覧">
+    <Layout
+      title="記事一覧"
+      description="医スク！の記事一覧ページ。薬剤師による最新の医学記事解説をチェック。"
+      url="https://isk.masa86.com/articles"
+      ga4MeasurementId={c.env.GA4_MEASUREMENT_ID}
+    >
       <h2>記事一覧</h2>
 
       <div class="article-grid">
@@ -73,8 +79,25 @@ articlesRoute.get('/:slug', async (c) => {
   // 目次を抽出
   const tocItems = extractHeadings(htmlContent)
 
+  // SEO設定
+  const siteUrl = 'https://isk.masa86.com'
+  const articleUrl = `${siteUrl}/articles/${article.slug}`
+  const description = truncateDescription(article.excerpt || article.title)
+  const jsonLd = generateArticleJsonLd(article, siteUrl)
+
   return c.html(
-    <Layout title={article.title} showTOC={true} tocItems={tocItems}>
+    <Layout
+      title={article.title}
+      showTOC={true}
+      tocItems={tocItems}
+      description={description}
+      url={articleUrl}
+      type="article"
+      publishedTime={article.created_at}
+      modifiedTime={article.updated_at}
+      jsonLd={jsonLd}
+      ga4MeasurementId={c.env.GA4_MEASUREMENT_ID}
+    >
       <article>
         <div style="margin-bottom: 20px;">
           {article.category && <span class="category">{article.category}</span>}

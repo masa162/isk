@@ -4,6 +4,7 @@ export type Env = {
   R2: R2Bucket
   SITE_URL: string
   R2_PUBLIC_URL: string
+  GA4_MEASUREMENT_ID: string
   ADMIN_USERNAME: string
   ADMIN_PASSWORD: string
 }
