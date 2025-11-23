@@ -18,51 +18,143 @@ app.get('/styles.css', (c) => {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.6;
       color: #333;
       background: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    .container {
-      max-width: 1200px;
+    .app-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 20px;
+      gap: 30px;
+      flex: 1;
     }
 
-    header {
+    /* 左サイドバー */
+    .left-sidebar {
+      position: sticky;
+      top: 20px;
+      height: fit-content;
       background: white;
-      border-bottom: 1px solid #e0e0e0;
-      padding: 20px 0;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    header h1 {
-      font-size: 28px;
+    .sidebar-header h2 {
+      font-size: 24px;
       margin-bottom: 5px;
     }
 
-    header p {
+    .sidebar-tagline {
+      font-size: 13px;
       color: #666;
-      font-size: 14px;
+      margin-bottom: 25px;
     }
 
-    nav {
-      margin-top: 15px;
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
 
-    nav a {
-      margin-right: 20px;
-      color: #0066cc;
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 6px;
       text-decoration: none;
+      color: #333;
+      transition: background 0.2s;
     }
 
-    nav a:hover {
-      text-decoration: underline;
+    .nav-item:hover {
+      background: #f5f5f5;
     }
 
-    main {
-      padding: 40px 0;
+    .nav-icon {
+      font-size: 18px;
+    }
+
+    .nav-label {
+      font-size: 15px;
+    }
+
+    /* メインコンテンツ */
+    .main-content {
+      min-width: 0;
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* 右サイドバー (TOC) */
+    .right-toc {
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+      width: 240px;
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .app-layout:has(.right-toc) {
+      grid-template-columns: 260px 1fr 240px;
+    }
+
+    .toc-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .toc-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toc-item {
+      display: block;
+      font-size: 14px;
+      color: #666;
+      text-decoration: none;
+      padding: 6px 0;
+      border-left: 2px solid transparent;
+      padding-left: 12px;
+      transition: all 0.2s;
+    }
+
+    .toc-item:hover {
+      color: #0066cc;
+      border-left-color: #0066cc;
+    }
+
+    .toc-level-3 {
+      font-size: 13px;
+    }
+
+    .toc-level-4 {
+      font-size: 12px;
+      color: #999;
     }
 
     .article-grid {
@@ -125,13 +217,42 @@ app.get('/styles.css', (c) => {
       background: #333;
       color: white;
       text-align: center;
-      padding: 20px 0;
-      margin-top: 40px;
+      padding: 20px;
+      margin-top: auto;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .footer-content p {
+      margin: 5px 0;
     }
 
     footer a {
       color: white;
       text-decoration: underline;
+    }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 1024px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .app-layout:has(.right-toc) {
+        grid-template-columns: 1fr;
+      }
+
+      .left-sidebar,
+      .right-toc {
+        display: none;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
     }
 
     .prose {

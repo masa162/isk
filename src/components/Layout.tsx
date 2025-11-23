@@ -1,11 +1,16 @@
 import type { FC } from 'hono/jsx'
+import { LeftSidebar } from './LeftSidebar'
+import { RightTOC } from './RightTOC'
+import type { TOCItem } from '../utils/toc'
 
 type LayoutProps = {
   title: string
   children: any
+  showTOC?: boolean
+  tocItems?: TOCItem[]
 }
 
-export const Layout: FC<LayoutProps> = ({ title, children }) => {
+export const Layout: FC<LayoutProps> = ({ title, children, showTOC = false, tocItems = [] }) => {
   return (
     <html lang="ja">
       <head>
@@ -15,26 +20,20 @@ export const Layout: FC<LayoutProps> = ({ title, children }) => {
         <link rel="stylesheet" href="/styles.css" />
       </head>
       <body>
-        <header>
-          <div class="container">
-            <h1>医スク！</h1>
-            <p>薬剤師による医学記事解説 + Podcast 🎧</p>
-            <nav>
-              <a href="/">ホーム</a>
-              <a href="/articles">記事一覧</a>
-              <a href="/profile">プロフィール</a>
-              <a href="/sitemap">サイトマップ</a>
-              <a href="/about">About</a>
-            </nav>
-          </div>
-        </header>
-        <main>
-          <div class="container">
+        <div class="app-layout">
+          <LeftSidebar />
+
+          <main class="main-content">
             {children}
-          </div>
-        </main>
+          </main>
+
+          {showTOC && tocItems.length > 0 && (
+            <RightTOC items={tocItems} />
+          )}
+        </div>
+
         <footer>
-          <div class="container">
+          <div class="footer-content">
             <p>© 2025 医スク！- 薬剤師による医学記事解説</p>
             <p><a href="/disclaimer">免責事項・利用規約</a></p>
           </div>

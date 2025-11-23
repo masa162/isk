@@ -3,6 +3,7 @@ import type { Env } from '../types'
 import { Layout } from '../components/Layout'
 import { ArticleRepository } from '../db/articles'
 import MarkdownIt from 'markdown-it'
+import { extractHeadings, addHeadingIds } from '../utils/toc'
 
 const md = new MarkdownIt({
   html: true,
@@ -63,10 +64,17 @@ articlesRoute.get('/:slug', async (c) => {
     return c.notFound()
   }
 
-  const htmlContent = md.render(article.content)
+  // Markdownをレンダリング
+  let htmlContent = md.render(article.content)
+
+  // 見出しにIDを追加
+  htmlContent = addHeadingIds(htmlContent)
+
+  // 目次を抽出
+  const tocItems = extractHeadings(htmlContent)
 
   return c.html(
-    <Layout title={article.title}>
+    <Layout title={article.title} showTOC={true} tocItems={tocItems}>
       <article>
         <div style="margin-bottom: 20px;">
           {article.category && <span class="category">{article.category}</span>}
