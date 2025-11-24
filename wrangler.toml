@@ -22,3 +22,7 @@ GA4_MEASUREMENT_ID = "G-W7VM968KKP"
 # 本番環境用の秘密情報（wrangler secret put コマンドで設定）
 # ADMIN_USERNAME
 # ADMIN_PASSWORD
+
+[assets]
+directory = "./public"
+binding = "ASSETS"

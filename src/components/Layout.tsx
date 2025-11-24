@@ -101,10 +101,17 @@ export const Layout: FC<LayoutProps> = ({
 
         <div id="mobile-overlay" class="mobile-overlay" onclick="toggleMobileMenu()"></div>
 
-        <div class={`app-layout ${hideSidebar ? 'no-sidebar' : ''}`} id="app-layout">
+        <div 
+          class={`grid max-w-[1400px] mx-auto p-5 gap-[30px] flex-1 ${
+            hideSidebar 
+              ? 'grid-cols-1' 
+              : 'grid-cols-[260px_1fr] has-[.right-toc]:grid-cols-[260px_1fr_240px] max-lg:grid-cols-1'
+          }`} 
+          id="app-layout"
+        >
           {!hideSidebar && <LeftSidebar />}
 
-          <main class="main-content">
+          <main class="min-w-0 bg-white rounded-lg p-[30px] shadow-sm max-lg:p-5">
             {children}
           </main>
 
@@ -113,10 +120,10 @@ export const Layout: FC<LayoutProps> = ({
           )}
         </div>
 
-        <footer>
-          <div class="footer-content">
-            <p>© 2025 医スク！- 薬剤師による医学記事解説</p>
-            <p><a href="/disclaimer">免責事項・利用規約</a></p>
+        <footer class="bg-[#333] text-white text-center p-5 mt-auto">
+          <div class="max-w-[1400px] mx-auto">
+            <p class="my-[5px]">© 2025 医スク！- 薬剤師による医学記事解説</p>
+            <p class="my-[5px]"><a href="/disclaimer" class="text-white underline">免責事項・利用規約</a></p>
           </div>
         </footer>
 

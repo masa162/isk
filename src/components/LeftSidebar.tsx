@@ -2,33 +2,33 @@ import type { FC } from 'hono/jsx'
 
 export const LeftSidebar: FC = () => {
   return (
-    <aside class="left-sidebar">
-      <div class="sidebar-content">
-        <div class="sidebar-header">
-          <h2><a href="/" style="color: #333; text-decoration: none;">医スク！</a></h2>
-          <p class="sidebar-tagline">薬剤師による医学記事解説 + Podcast 🎧</p>
+    <aside class="left-sidebar sticky top-5 h-fit bg-white rounded-lg p-5 shadow-sm max-lg:fixed max-lg:top-0 max-lg:-left-[280px] max-lg:h-screen max-lg:w-[260px] max-lg:z-[1000] max-lg:transition-[left] max-lg:duration-300 max-lg:overflow-y-auto [&.mobile-open]:max-lg:left-0">
+      <div class="flex flex-col gap-[5px]">
+        <div class="mb-[5px]">
+          <h2 class="text-2xl mb-[5px]"><a href="/" class="text-[#333] no-underline">医スク！</a></h2>
+          <p class="text-[13px] text-[#666] mb-[25px]">薬剤師による医学記事解説 + Podcast 🎧</p>
         </div>
 
-        <nav class="sidebar-nav">
-          <a href="/" class="nav-item">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">ホーム</span>
+        <nav class="flex flex-col gap-[5px]">
+          <a href="/" class="flex items-center gap-[10px] px-3 py-[10px] rounded-md text-[#333] no-underline transition-colors hover:bg-[#f5f5f5]">
+            <span class="text-lg">🏠</span>
+            <span class="text-[15px]">ホーム</span>
           </a>
-          <a href="/articles" class="nav-item">
-            <span class="nav-icon">📚</span>
-            <span class="nav-label">記事一覧</span>
+          <a href="/articles" class="flex items-center gap-[10px] px-3 py-[10px] rounded-md text-[#333] no-underline transition-colors hover:bg-[#f5f5f5]">
+            <span class="text-lg">📚</span>
+            <span class="text-[15px]">記事一覧</span>
           </a>
-          <a href="/profile" class="nav-item">
-            <span class="nav-icon">👤</span>
-            <span class="nav-label">プロフィール</span>
+          <a href="/profile" class="flex items-center gap-[10px] px-3 py-[10px] rounded-md text-[#333] no-underline transition-colors hover:bg-[#f5f5f5]">
+            <span class="text-lg">👤</span>
+            <span class="text-[15px]">プロフィール</span>
           </a>
-          <a href="/sitemap" class="nav-item">
-            <span class="nav-icon">🗺️</span>
-            <span class="nav-label">サイトマップ</span>
+          <a href="/sitemap" class="flex items-center gap-[10px] px-3 py-[10px] rounded-md text-[#333] no-underline transition-colors hover:bg-[#f5f5f5]">
+            <span class="text-lg">🗺️</span>
+            <span class="text-[15px]">サイトマップ</span>
           </a>
-          <a href="/about" class="nav-item">
-            <span class="nav-icon">ℹ️</span>
-            <span class="nav-label">About</span>
+          <a href="/about" class="flex items-center gap-[10px] px-3 py-[10px] rounded-md text-[#333] no-underline transition-colors hover:bg-[#f5f5f5]">
+            <span class="text-lg">ℹ️</span>
+            <span class="text-[15px]">About</span>
           </a>
         </nav>
       </div>
