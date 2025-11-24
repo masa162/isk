@@ -9,7 +9,7 @@ export const RightTOC: FC<RightTOCProps> = ({ items }) => {
   if (items.length === 0) return null
 
   return (
-    <aside class="sticky top-5 h-fit w-[240px] bg-white rounded-lg p-5 shadow-sm max-lg:hidden">
+    <aside class="right-toc sticky top-5 h-fit w-[240px] bg-white rounded-lg p-5 shadow-sm max-lg:hidden">
       <div>
         <h3 class="text-base font-bold mb-[15px] pb-[10px] border-b-2 border-[#e0e0e0]">目次</h3>
         <nav class="flex flex-col gap-2">
