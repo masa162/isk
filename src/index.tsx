@@ -354,10 +354,10 @@ app.get('/styles.css', (c) => {
     }
 
     .prose h1 { font-size: 32px; margin: 30px 0 20px; }
-    .prose h2 { font-size: 28px; margin: 25px 0 15px; }
-    .prose h3 { font-size: 24px; margin: 20px 0 10px; }
-    .prose p { margin-bottom: 15px; }
-    .prose ul, .prose ol { margin-left: 30px; margin-bottom: 15px; }
+    .prose h2 { font-size: 28px; margin: 40px 0 20px; }
+    .prose h3 { font-size: 24px; margin: 30px 0 15px; }
+    .prose p { margin-bottom: 20px; }
+    .prose ul, .prose ol { margin-left: 30px; margin-bottom: 20px; }
     .prose blockquote {
       border-left: 4px solid #ddd;
       padding-left: 20px;
