@@ -22,6 +22,16 @@ indexRoute.get('/', async (c) => {
       jsonLd={jsonLd}
       ga4MeasurementId={c.env.GA4_MEASUREMENT_ID}
     >
+      {/* Hero Section */}
+      <div class="hero-section">
+        <img src="/images/hero/hero-main.webp" alt="医スク！Hero" class="hero-image" />
+        <div class="hero-overlay">
+          <h1 class="hero-title">医スク！</h1>
+          <p class="hero-description">薬剤師による医学記事解説 + Podcast</p>
+          <p class="hero-subtitle">エビデンスに基づいた分かりやすい医学情報をお届けします</p>
+        </div>
+      </div>
+
       <h2>最新記事</h2>
 
       {categories.length > 0 && (
