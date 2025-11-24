@@ -123,7 +123,11 @@ export const Layout: FC<LayoutProps> = ({
         <footer class="bg-[#333] text-white text-center p-5 mt-auto">
           <div class="max-w-[1400px] mx-auto">
             <p class="my-[5px]">© 2025 医スク！- 薬剤師による医学記事解説</p>
-            <p class="my-[5px]"><a href="/disclaimer" class="text-white underline">免責事項・利用規約</a></p>
+            <p class="my-[5px]">
+              <a href="/disclaimer" class="text-white underline">免責事項・利用規約</a>
+              <span class="mx-2">|</span>
+              <a href="/tokushou" class="text-white underline">特定商取引法</a>
+            </p>
           </div>
         </footer>
 

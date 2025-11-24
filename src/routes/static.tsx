@@ -137,6 +137,83 @@ staticRoute.get('/disclaimer', (c) => {
   )
 })
 
+// 特定商取引法ページ
+staticRoute.get('/tokushou', (c) => {
+  return c.html(
+    <Layout
+      title="特定商取引法に基づく表記"
+      description="医スク！の特定商取引法に基づく表記"
+      url="https://isk.masa86.com/tokushou"
+      ga4MeasurementId={c.env.GA4_MEASUREMENT_ID}
+    >
+      <div class="prose">
+        <h1>特定商取引法に基づく表記</h1>
+
+        <h2>販売業者</h2>
+        <p>ISK Consulting</p>
+
+        <h2>代表責任者</h2>
+        <p>中山正之</p>
+
+        <h2>所在地</h2>
+        <p>
+          〒215-0025<br />
+          神奈川県川崎市麻生区五力田 2-18-4
+        </p>
+        <p style="font-size: 14px; color: #666;">
+          ※個人の住所になりますので、取引時に請求があれば遅滞なく開示いたします。
+        </p>
+
+        <h2>電話番号</h2>
+        <p>090-2405-5122</p>
+        <p style="font-size: 14px; color: #666;">
+          ※サービスに関するお問い合わせは、記録保持の観点から下記メールアドレス、または公式LINEよりお願いいたします。<br />
+          ※請求があれば遅滞なく開示いたします。
+        </p>
+
+        <h2>メールアドレス</h2>
+        <p><a href="mailto:info@masa86.com">info@masa86.com</a></p>
+
+        <h2>ホームページURL</h2>
+        <p><a href="https://isk.masa86.com/">https://isk.masa86.com/</a></p>
+
+        <h2>販売価格</h2>
+        <p>各商品ページに記載（表示価格は消費税込み）</p>
+
+        <h2>商品代金以外の必要料金</h2>
+        <p>インターネット接続料金、通信料金（お客様の負担となります）</p>
+
+        <h2>お支払方法</h2>
+        <ul>
+          <li>クレジットカード決済（Stripe）</li>
+          <li>銀行振込（前払い）</li>
+        </ul>
+
+        <h2>支払いの時期</h2>
+        <ul>
+          <li>クレジットカード：商品注文時にお支払いが確定します。</li>
+          <li>銀行振込：お申し込みから7日以内にお振込みください。</li>
+        </ul>
+
+        <h2>商品の引渡時期（役務の提供時期）</h2>
+        <ul>
+          <li>決済完了後、直ちにご利用いただけます（デジタルコンテンツの場合）。</li>
+          <li>コンサルティングサービスについては、お客様と調整した日時にて実施いたします。</li>
+        </ul>
+
+        <h2>返品・交換・キャンセルについて</h2>
+        <ul>
+          <li><strong>デジタルコンテンツ・コンサルティングの性質上、決済完了後の返品・返金はお受けできません。</strong></li>
+          <li>月額プラン（サブスクリプション）の解約は、次回更新日の3日前までにマイページ、またはお問い合わせ窓口よりご連絡ください。日割りでの返金は行いません。</li>
+        </ul>
+
+        <h2>免責事項</h2>
+        <p>当サービスは、健康維持・増進を目的とした情報提供および相談サービスです。医師法に基づく医療行為（診断・治療・投薬）を行うものではありません。体調に異変を感じた場合は、速やかに医療機関を受診してください。</p>
+      </div>
+    </Layout>
+  )
+})
+
 // お申し込みページ
 staticRoute.get('/payment', (c) => {
   return c.html(
@@ -218,6 +295,7 @@ staticRoute.get('/sitemap', async (c) => {
         <li><a href="/profile">プロフィール</a></li>
         <li><a href="/payment">お申し込み</a></li>
         <li><a href="/disclaimer">免責事項・利用規約</a></li>
+        <li><a href="/tokushou">特定商取引法</a></li>
       </ul>
 
       {articles.length > 0 && (
@@ -246,7 +324,8 @@ staticRoute.get('/sitemap.xml', async (c) => {
     { url: '/articles', changefreq: 'daily', priority: '0.9' },
     { url: '/profile', changefreq: 'monthly', priority: '0.7' },
     { url: '/payment', changefreq: 'monthly', priority: '0.8' },
-    { url: '/disclaimer', changefreq: 'yearly', priority: '0.5' }
+    { url: '/disclaimer', changefreq: 'yearly', priority: '0.5' },
+    { url: '/tokushou', changefreq: 'yearly', priority: '0.5' }
   ]
 
   let articles = []
