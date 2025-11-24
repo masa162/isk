@@ -157,6 +157,7 @@ staticRoute.get('/sitemap', async (c) => {
       description="医スク！のサイトマップ"
       url="https://isk.masa86.com/sitemap"
       ga4MeasurementId={c.env.GA4_MEASUREMENT_ID}
+      hideSidebar={true}
     >
       <h1>サイトマップ</h1>
       <h2>メインページ</h2>

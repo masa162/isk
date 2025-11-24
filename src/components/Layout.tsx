@@ -16,6 +16,7 @@ type LayoutProps = {
   modifiedTime?: string
   jsonLd?: object
   ga4MeasurementId?: string
+  hideSidebar?: boolean
 }
 
 export const Layout: FC<LayoutProps> = ({
@@ -30,7 +31,8 @@ export const Layout: FC<LayoutProps> = ({
   publishedTime,
   modifiedTime,
   jsonLd,
-  ga4MeasurementId
+  ga4MeasurementId,
+  hideSidebar = false
 }) => {
   const fullTitle = `${title} - 医スク！`
 
@@ -97,8 +99,10 @@ export const Layout: FC<LayoutProps> = ({
         {/* モバイルメニューオーバーレイ */}
         <div id="mobile-overlay" class="mobile-overlay" onclick="toggleMobileMenu()"></div>
 
-        <div class="app-layout" id="app-layout">
-          <LeftSidebar />
+        <div id="mobile-overlay" class="mobile-overlay" onclick="toggleMobileMenu()"></div>
+
+        <div class={`app-layout ${hideSidebar ? 'no-sidebar' : ''}`} id="app-layout">
+          {!hideSidebar && <LeftSidebar />}
 
           <main class="main-content">
             {children}

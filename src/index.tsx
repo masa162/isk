@@ -42,6 +42,10 @@ app.get('/styles.css', (c) => {
       flex: 1;
     }
 
+    .app-layout.no-sidebar {
+      grid-template-columns: 1fr;
+    }
+
     /* 左サイドバー */
     .left-sidebar {
       position: sticky;
