@@ -157,6 +157,15 @@ staticRoute.get('/about', (c) => {
 
 // サイトマップページ (HTML)
 staticRoute.get('/sitemap', async (c) => {
+  let articles = []
+
+  try {
+    const repo = new ArticleRepository(c.env.DB)
+    articles = await repo.list({ published: true, limit: 1000 })
+  } catch (error) {
+    console.error('[HTML Sitemap] Error fetching articles:', error)
+  }
+
   return c.html(
     <Layout
       title="サイトマップ"
@@ -174,14 +183,26 @@ staticRoute.get('/sitemap', async (c) => {
         <li><a href="/about">About</a></li>
         <li><a href="/disclaimer">免責事項・利用規約</a></li>
       </ul>
+
+      {articles.length > 0 && (
+        <>
+          <h2>記事一覧</h2>
+          <ul>
+            {articles.map(article => (
+              <li>
+                <a href={`/articles/${article.slug}`}>{article.title}</a>
+                {article.category && <span style="margin-left: 10px; color: #666;">({article.category})</span>}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </Layout>
   )
 })
 
 // XML サイトマップ (Google Search Console用)
 staticRoute.get('/sitemap.xml', async (c) => {
-  const repo = new ArticleRepository(c.env.DB)
-  const articles = await repo.list({ published: true, limit: 1000 })
   const siteUrl = 'https://isk.masa86.com'
 
   const staticPages = [
@@ -192,6 +213,30 @@ staticRoute.get('/sitemap.xml', async (c) => {
     { url: '/disclaimer', changefreq: 'yearly', priority: '0.5' }
   ]
 
+  let articles = []
+
+  try {
+    const repo = new ArticleRepository(c.env.DB)
+    articles = await repo.list({ published: true, limit: 1000 })
+    console.log(`[Sitemap] Successfully fetched ${articles.length} articles`)
+  } catch (error) {
+    console.error('[Sitemap] Error fetching articles:', error)
+    // Continue with empty articles array - at least return static pages
+  }
+
+  const articlesXml = articles.map(article => {
+    // Safely handle updated_at field
+    const lastmod = article.updated_at || article.created_at
+    const lastmodDate = lastmod ? new Date(lastmod).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+
+    return `  <url>
+    <loc>${siteUrl}/articles/${article.slug}</loc>
+    <lastmod>${lastmodDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>`
+  }).join('\n')
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticPages.map(page => `  <url>
@@ -199,12 +244,7 @@ ${staticPages.map(page => `  <url>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
   </url>`).join('\n')}
-${articles.map(article => `  <url>
-    <loc>${siteUrl}/articles/${article.slug}</loc>
-    <lastmod>${article.updated_at.split('T')[0]}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>`).join('\n')}
+${articlesXml}
 </urlset>`
 
   return c.text(xml, 200, {
