@@ -198,6 +198,126 @@ adminRoute.post('/articles', async (c) => {
 })
 
 // TODO: 編集・削除機能は後で実装
-adminRoute.get('/articles/:id/edit', (c) => {
-  return c.text('編集機能は準備中です')
+// 記事編集フォーム
+adminRoute.get('/articles/:id/edit', async (c) => {
+  const id = Number(c.req.param('id'))
+  const repo = new ArticleRepository(c.env.DB)
+  const article = await repo.get(id)
+
+  if (!article) {
+    return c.text('記事が見つかりません', 404)
+  }
+
+  const html = `
+    <!DOCTYPE html>
+    <html lang="ja">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>記事編集 - 管理画面</title>
+      <link rel="stylesheet" href="/styles.css">
+    </head>
+    <body>
+      <header>
+        <div class="container">
+          <h1>記事編集</h1>
+          <nav>
+            <a href="/admin">← 記事一覧に戻る</a>
+          </nav>
+        </div>
+      </header>
+      <main>
+        <div class="container">
+          <form method="POST" action="/admin/articles/${article.id}" style="background: white; padding: 30px; border-radius: 8px; max-width: 800px;">
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">タイトル *</label>
+              <input type="text" name="title" required value="${article.title}" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">スラグ（URL）*</label>
+              <div style="display: flex; gap: 10px;">
+                <input type="text" id="slug-input" name="slug" required value="${article.slug}" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                <button type="button" onclick="generateSlug()" style="background: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">自動生成</button>
+              </div>
+              <small style="color: #666;">半角英数字5桁（自動生成推奨）</small>
+            </div>
+            <script>
+              function generateSlug() {
+                const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+                let slug = '';
+                for (let i = 0; i < 5; i++) {
+                  slug += chars[Math.floor(Math.random() * chars.length)];
+                }
+                document.getElementById('slug-input').value = slug;
+              }
+            </script>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">カテゴリ</label>
+              <input type="text" name="category" value="${article.category || ''}" placeholder="例: 薬学" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">タグ（カンマ区切り）</label>
+              <input type="text" name="tags" value="${article.tags ? article.tags.join(', ') : ''}" placeholder="例: 漢方, 免疫, 論文解説" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">抜粋</label>
+              <textarea name="excerpt" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">${article.excerpt || ''}</textarea>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">本文（Markdown）*</label>
+              <textarea name="content" required rows="20" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;">${article.content}</textarea>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">音声ファイルURL</label>
+              <input type="text" name="audio_url" value="${article.audio_url || ''}" placeholder="/audio/filename.mp3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: flex; align-items: center;">
+                <input type="checkbox" name="published" value="1" ${article.published ? 'checked' : ''} style="margin-right: 8px;">
+                公開する
+              </label>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <button type="submit" style="background: #0066cc; color: white; padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer;">更新</button>
+              <a href="/admin" style="padding: 12px 30px; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; color: #333; display: inline-block;">キャンセル</a>
+            </div>
+          </form>
+        </div>
+      </main>
+    </body>
+    </html>
+  `
+  return c.html(html)
+})
+
+// 記事更新処理
+adminRoute.post('/articles/:id', async (c) => {
+  const id = Number(c.req.param('id'))
+  const formData = await c.req.parseBody()
+  const repo = new ArticleRepository(c.env.DB)
+
+  const tags = formData.tags
+    ? String(formData.tags).split(',').map(t => t.trim()).filter(Boolean)
+    : []
+
+  await repo.update(id, {
+    title: String(formData.title),
+    slug: String(formData.slug),
+    content: String(formData.content),
+    excerpt: formData.excerpt ? String(formData.excerpt) : undefined,
+    category: formData.category ? String(formData.category) : undefined,
+    tags,
+    audio_url: formData.audio_url ? String(formData.audio_url) : undefined,
+    published: formData.published === '1' ? 1 : 0
+  })
+
+  return c.redirect('/admin')
 })
