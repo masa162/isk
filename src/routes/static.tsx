@@ -137,19 +137,55 @@ staticRoute.get('/disclaimer', (c) => {
   )
 })
 
-// Aboutページ
-staticRoute.get('/about', (c) => {
+// お申し込みページ
+staticRoute.get('/payment', (c) => {
   return c.html(
     <Layout
-      title="About"
-      description="医スク！について - 薬剤師によるエビデンスに基づいた医学記事解説サイト"
-      url="https://isk.masa86.com/about"
+      title="お申し込み"
+      description="医スク！の健康コンサルティングサービスにお申し込みいただけます"
+      url="https://isk.masa86.com/payment"
       ga4MeasurementId={c.env.GA4_MEASUREMENT_ID}
     >
       <div class="prose">
-        <h1>医スク！について</h1>
-        <p>薬剤師による、エビデンスに基づいた医学記事解説サイトです。</p>
-        <p>最新の医学論文を分かりやすく解説し、あなたの健康をサポートします。</p>
+        <h1>お申し込み</h1>
+        <p>医スク！では、薬剤師による健康コンサルティングサービスを提供しています。</p>
+
+        <div style="margin: 40px 0;">
+          <h2>パーソナル健康コンサルティング（相談 60分）</h2>
+          <p><strong>¥30,000 / 月</strong></p>
+          <p>毎月60分の個別健康相談を受けられるサブスクリプションサービスです。</p>
+          <a
+            href="https://buy.stripe.com/9B69AVdf837bbXZcnH3VC00"
+            target="_blank"
+            rel="noopener noreferrer"
+            style="display: inline-block; background: #0066cc; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; margin-top: 10px; font-weight: bold;"
+          >
+            お申し込みはこちら
+          </a>
+        </div>
+
+        <div style="margin: 40px 0;">
+          <h2>スポット健康相談（単発）</h2>
+          <p><strong>¥30,000</strong></p>
+          <p>単発での健康相談サービスです。1回限りのご相談に最適です。</p>
+          <a
+            href="https://buy.stripe.com/fZu3cx1wqcHL1jl0EZ3VC01"
+            target="_blank"
+            rel="noopener noreferrer"
+            style="display: inline-block; background: #0066cc; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; margin-top: 10px; font-weight: bold;"
+          >
+            お申し込みはこちら
+          </a>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+          <h3>ご注意事項</h3>
+          <ul>
+            <li>お支払いはStripeの安全な決済システムを使用しています</li>
+            <li>お申し込み後、メールにて詳細をご案内いたします</li>
+            <li>キャンセルポリシーについては利用規約をご確認ください</li>
+          </ul>
+        </div>
       </div>
     </Layout>
   )
@@ -180,7 +216,7 @@ staticRoute.get('/sitemap', async (c) => {
         <li><a href="/">ホーム</a></li>
         <li><a href="/articles">記事一覧</a></li>
         <li><a href="/profile">プロフィール</a></li>
-        <li><a href="/about">About</a></li>
+        <li><a href="/payment">お申し込み</a></li>
         <li><a href="/disclaimer">免責事項・利用規約</a></li>
       </ul>
 
@@ -209,7 +245,7 @@ staticRoute.get('/sitemap.xml', async (c) => {
     { url: '/', changefreq: 'daily', priority: '1.0' },
     { url: '/articles', changefreq: 'daily', priority: '0.9' },
     { url: '/profile', changefreq: 'monthly', priority: '0.7' },
-    { url: '/about', changefreq: 'monthly', priority: '0.7' },
+    { url: '/payment', changefreq: 'monthly', priority: '0.8' },
     { url: '/disclaimer', changefreq: 'yearly', priority: '0.5' }
   ]
 
