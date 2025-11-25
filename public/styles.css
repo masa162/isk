@@ -3,6 +3,9 @@
 .visible {
   visibility: visible;
 }
+.static {
+  position: static;
+}
 .sticky {
   position: sticky;
 }
