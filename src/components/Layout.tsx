@@ -97,7 +97,7 @@ export const Layout: FC<LayoutProps> = ({
           class="fixed top-5 left-5 z-[1001] bg-white border border-[#ddd] rounded-lg w-[50px] h-[50px] text-2xl cursor-pointer shadow-sm transition-all duration-300 hover:bg-[#f5f5f5] block lg:hidden" 
           onclick="toggleMobileMenu()"
         >
-        >
+
           ☰
         </button>
 
