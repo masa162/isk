@@ -2,7 +2,7 @@ import type { FC } from 'hono/jsx'
 
 export const LeftSidebar: FC = () => {
   return (
-    <aside class="left-sidebar sticky top-5 h-fit bg-white rounded-lg p-5 shadow-sm max-lg:fixed max-lg:top-0 max-lg:-left-[280px] max-lg:h-screen max-lg:w-[260px] max-lg:z-[1000] max-lg:transition-[left] max-lg:duration-300 max-lg:overflow-y-auto [&.mobile-open]:max-lg:left-0">
+    <aside class="left-sidebar fixed top-0 -left-[280px] h-screen w-[260px] z-[1000] transition-[left] duration-300 overflow-y-auto bg-white p-5 shadow-sm [&.mobile-open]:left-0 lg:sticky lg:top-5 lg:left-auto lg:h-fit lg:w-auto lg:z-auto lg:transition-none lg:overflow-visible lg:rounded-lg">
       <div class="flex flex-col gap-[5px]">
         <div class="mb-[5px]">
           <h2 class="text-2xl mb-[5px]"><a href="/" class="text-[#333] no-underline">医スク！</a></h2>

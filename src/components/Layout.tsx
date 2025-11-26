@@ -94,8 +94,9 @@ export const Layout: FC<LayoutProps> = ({
         {/* ハンバーガーメニューボタン（スマホのみ表示） */}
         <button 
           id="hamburger-btn" 
-          class="hidden fixed top-5 left-5 z-[1001] bg-white border border-[#ddd] rounded-lg w-[50px] h-[50px] text-2xl cursor-pointer shadow-sm transition-all duration-300 hover:bg-[#f5f5f5] max-lg:block" 
+          class="fixed top-5 left-5 z-[1001] bg-white border border-[#ddd] rounded-lg w-[50px] h-[50px] text-2xl cursor-pointer shadow-sm transition-all duration-300 hover:bg-[#f5f5f5] block lg:hidden" 
           onclick="toggleMobileMenu()"
+        >
         >
           ☰
         </button>
@@ -110,11 +111,7 @@ export const Layout: FC<LayoutProps> = ({
 
 
         <div 
-          class={`grid max-w-[1400px] mx-auto p-5 gap-[30px] flex-1 ${
-            hideSidebar 
-              ? 'grid-cols-1' 
-              : 'grid-cols-[260px_1fr] has-[.right-toc]:grid-cols-[260px_1fr_240px] max-lg:grid-cols-1'
-          }`} 
+          class={`grid max-w-[1400px] mx-auto p-5 gap-[30px] flex-1 grid-cols-1 lg:grid-cols-[260px_1fr] has-[.right-toc]:lg:grid-cols-[260px_1fr_240px]`} 
           id="app-layout"
         >
           {!hideSidebar && <LeftSidebar />}

@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./src/**/*.{html,js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        'max-lg': {'max': '1023px'},
+      },
+    },
   },
   plugins: [],
 }
