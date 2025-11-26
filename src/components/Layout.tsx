@@ -92,14 +92,22 @@ export const Layout: FC<LayoutProps> = ({
       </head>
       <body>
         {/* ハンバーガーメニューボタン（スマホのみ表示） */}
-        <button id="hamburger-btn" class="hamburger-btn" onclick="toggleMobileMenu()">
+        <button 
+          id="hamburger-btn" 
+          class="hidden fixed top-5 left-5 z-[1001] bg-white border border-[#ddd] rounded-lg w-[50px] h-[50px] text-2xl cursor-pointer shadow-sm transition-all duration-300 hover:bg-[#f5f5f5] max-lg:block" 
+          onclick="toggleMobileMenu()"
+        >
           ☰
         </button>
 
         {/* モバイルメニューオーバーレイ */}
-        <div id="mobile-overlay" class="mobile-overlay" onclick="toggleMobileMenu()"></div>
+        <div 
+          id="mobile-overlay" 
+          class="fixed inset-0 bg-black/50 z-[999] opacity-0 invisible transition-all duration-300 [&.active]:opacity-100 [&.active]:visible" 
+          onclick="toggleMobileMenu()"
+        ></div>
 
-        <div id="mobile-overlay" class="mobile-overlay" onclick="toggleMobileMenu()"></div>
+
 
         <div 
           class={`grid max-w-[1400px] mx-auto p-5 gap-[30px] flex-1 ${
