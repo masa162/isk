@@ -51,6 +51,11 @@ export function generateWebsiteJsonLd(siteUrl: string) {
     name: '医スク！',
     description: '薬剤師による医学記事解説 + Podcast',
     url: siteUrl,
+    publisher: {
+      '@type': 'Organization',
+      name: '医スク！',
+      url: siteUrl
+    },
     potentialAction: {
       '@type': 'SearchAction',
       target: {
