@@ -1,4 +1,5 @@
 import type { FC } from 'hono/jsx'
+import { raw } from 'hono/html'
 import { LeftSidebar } from './LeftSidebar'
 import { RightTOC } from './RightTOC'
 import type { TOCItem } from '../utils/toc'
@@ -35,6 +36,7 @@ export const Layout: FC<LayoutProps> = ({
   hideSidebar = false
 }) => {
   const fullTitle = `${title} - 医スク！`
+  const jsonLdString = jsonLd ? JSON.stringify(jsonLd) : ''
 
   return (
     <html lang="ja">
@@ -68,9 +70,7 @@ export const Layout: FC<LayoutProps> = ({
 
         {/* JSON-LD Structured Data */}
         {jsonLd && (
-          <script type="application/ld+json">
-            {JSON.stringify(jsonLd)}
-          </script>
+          <script type="application/ld+json">{raw(jsonLdString)}</script>
         )}
 
         <link rel="stylesheet" href="/styles.css" />
