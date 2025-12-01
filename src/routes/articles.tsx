@@ -99,21 +99,18 @@ articlesRoute.get('/:slug', async (c) => {
       ga4MeasurementId={c.env.GA4_MEASUREMENT_ID}
     >
       <article>
-        <div style="margin-bottom: 20px;">
-          {article.category && <span class="category">{article.category}</span>}
-          {article.tags && article.tags.map(tag => (
-            <span class="tag">#{tag}</span>
-          ))}
-        </div>
+        <h1 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 10px; line-height: 1.2;">{article.title}</h1>
 
-        <h1>{article.title}</h1>
-
-        <div class="article-meta" style="margin-bottom: 30px;">
+        <div class="article-meta" style="margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
           <time>{new Date(article.created_at).toLocaleDateString('ja-JP', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
           })}</time>
+          {article.category && <span class="category">{article.category}</span>}
+          {article.tags && article.tags.map(tag => (
+            <span class="tag">#{tag}</span>
+          ))}
           {article.audio_url && <span> | 🎧 音声解説あり</span>}
         </div>
 

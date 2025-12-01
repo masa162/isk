@@ -8,7 +8,8 @@ export const indexRoute = new Hono<{ Bindings: Env }>()
 
 indexRoute.get('/', async (c) => {
   const repo = new ArticleRepository(c.env.DB)
-  const articles = await repo.list({ published: true, limit: 20 })
+  const category = c.req.query('category')
+  const articles = await repo.list({ published: true, limit: 20, category })
   const categories = await repo.getCategories()
 
   const siteUrl = 'https://isk.masa86.com'
