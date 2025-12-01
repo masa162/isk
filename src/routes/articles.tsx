@@ -12,20 +12,47 @@ const md = new MarkdownIt({
   typographer: true
 })
 
+// 外部リンクを別タブで開くように設定
+const defaultRender = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
+  return self.renderToken(tokens, idx, options)
+}
+
+md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+  const token = tokens[idx]
+  const hrefIndex = token.attrIndex('href')
+
+  if (hrefIndex >= 0) {
+    const href = token.attrs![hrefIndex][1]
+    // 外部リンク（http/httpsで始まり、isk.masa86.comではない）を判定
+    if ((href.startsWith('http://') || href.startsWith('https://')) && !href.includes('isk.masa86.com')) {
+      token.attrPush(['target', '_blank'])
+      token.attrPush(['rel', 'noopener noreferrer'])
+    }
+  }
+
+  return defaultRender(tokens, idx, options, env, self)
+}
+
 export const articlesRoute = new Hono<{ Bindings: Env }>()
 
 // 記事一覧
 articlesRoute.get('/', async (c) => {
   const repo = new ArticleRepository(c.env.DB)
   const category = c.req.query('category')
+  const tag = c.req.query('tag')
   const q = c.req.query('q')
 
-  const articles = await repo.list({
+  // タグでフィルタリング
+  let articles = await repo.list({
     published: true,
     category,
     q,
     limit: 50
   })
+
+  if (tag) {
+    articles = articles.filter(article => article.tags && article.tags.includes(tag))
+  }
 
   return c.html(
     <Layout
@@ -46,7 +73,7 @@ articlesRoute.get('/', async (c) => {
             <div class="article-meta">
               {article.category && <span class="category">{article.category}</span>}
               {article.tags && article.tags.map(tag => (
-                <span class="tag">#{tag}</span>
+                <a href={`/articles?tag=${tag}`} class="tag">#{tag}</a>
               ))}
               {article.audio_url && <span>🎧</span>}
               <div>{new Date(article.created_at).toLocaleDateString('ja-JP')}</div>
@@ -109,7 +136,7 @@ articlesRoute.get('/:slug', async (c) => {
           })}</time>
           {article.category && <span class="category">{article.category}</span>}
           {article.tags && article.tags.map(tag => (
-            <span class="tag">#{tag}</span>
+            <a href={`/articles?tag=${tag}`} class="tag">#{tag}</a>
           ))}
           {article.audio_url && <span> | 🎧 音声解説あり</span>}
         </div>
