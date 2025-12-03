@@ -132,6 +132,8 @@ export const Layout: FC<LayoutProps> = ({
               <a href="/disclaimer" class="text-white underline">免責事項・利用規約</a>
               <span class="mx-2">|</span>
               <a href="/tokushou" class="text-white underline">特定商取引法</a>
+              <span class="mx-2">|</span>
+              <a href="/feed.xml" class="text-white underline">RSS</a>
             </p>
           </div>
         </footer>

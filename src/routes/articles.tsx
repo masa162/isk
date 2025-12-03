@@ -145,7 +145,7 @@ articlesRoute.get('/:slug', async (c) => {
           <div style="background: linear-gradient(to right, #e3f2fd, #f3e5f5); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
             <h3 style="margin-bottom: 10px;">🎧 音声で聴く</h3>
             <audio controls style="width: 100%;">
-              <source src={`${c.env.R2_PUBLIC_URL}${article.audio_url}`} type="audio/mpeg" />
+              <source src={article.audio_url?.startsWith('http') ? article.audio_url : `${c.env.R2_PUBLIC_URL}${article.audio_url}`} type="audio/mpeg" />
               お使いのブラウザは音声再生に対応していません。
             </audio>
           </div>

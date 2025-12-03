@@ -4,6 +4,7 @@ import type { Env } from './types'
 // ルートのインポート
 import { indexRoute } from './routes/index'
 import { articlesRoute } from './routes/articles'
+import { feedRoute } from './routes/feed'
 import { staticRoute } from './routes/static'
 import { adminRoute } from './routes/admin'
 
@@ -16,6 +17,7 @@ const app = new Hono<{ Bindings: Env }>()
 // ルート登録
 app.route('/', indexRoute)
 app.route('/articles', articlesRoute)
+app.route('/feed.xml', feedRoute)
 app.route('/admin', adminRoute)
 app.route('/', staticRoute)
 
