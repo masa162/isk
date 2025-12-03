@@ -40,7 +40,7 @@ feedRoute.get('/', async (c) => {
       <itunes:category text="Medicine"/>
     </itunes:category>
     <itunes:explicit>false</itunes:explicit>
-    <itunes:image href="${siteUrl}/images/podcast-cover.jpg"/>
+    <itunes:image href="${siteUrl}/podcast-cover.jpg"/>
     
     ${podcastEpisodes.map(episode => {
       const episodeUrl = `${siteUrl}/articles/${episode.slug}`

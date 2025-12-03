@@ -74,6 +74,7 @@ export const Layout: FC<LayoutProps> = ({
         )}
 
         <link rel="stylesheet" href="/styles.css" />
+        <link rel="icon" href="/favicon.ico" />
 
         {/* Google Analytics 4 */}
         {ga4MeasurementId && (
