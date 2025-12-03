@@ -34,7 +34,7 @@ feedRoute.get('/', async (c) => {
     <itunes:summary>薬剤師による最新の医学記事解説。医スク！の記事を音声でお届けします。</itunes:summary>
     <itunes:owner>
       <itunes:name>医スク！</itunes:name>
-      <itunes:email>info@isk.masa86.com</itunes:email>
+      <itunes:email>info@masa86.com</itunes:email>
     </itunes:owner>
     <itunes:category text="Health &amp; Fitness">
       <itunes:category text="Medicine"/>
