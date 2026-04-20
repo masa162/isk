@@ -110,9 +110,12 @@ articlesRoute.get('/:slug', async (c) => {
   const repo = new ArticleRepository(c.env.DB)
   const article = await repo.get(slug)
 
-  if (!article || !article.published) {
+  if (!article) {
     return c.notFound()
   }
+
+  // 未公開記事はURL直打ちでのみ閲覧可（一覧には出ない）
+  const isDraft = !article.published
 
   // Markdownをレンダリング
   let htmlContent = md.render(article.content)
@@ -145,6 +148,11 @@ articlesRoute.get('/:slug', async (c) => {
       ga4MeasurementId={c.env.GA4_MEASUREMENT_ID}
     >
       <article>
+        {isDraft && (
+          <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 10px 16px; margin-bottom: 20px; font-size: 14px; color: #856404;">
+            ⚠️ これは下書き記事です。公開一覧には表示されません。
+          </div>
+        )}
         <h1 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 10px; line-height: 1.2;">{article.title}</h1>
 
         <div class="article-meta" style="margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">

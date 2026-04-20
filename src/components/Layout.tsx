@@ -77,7 +77,12 @@ export const Layout: FC<LayoutProps> = ({
         <link rel="icon" href="/favicon.ico" />
 
         {type === 'article' && (
-          <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"></script>
+          <script type="module" dangerouslySetInnerHTML={{
+            __html: `
+              import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+              mermaid.initialize({ startOnLoad: true, theme: 'default' });
+            `
+          }}></script>
         )}
 
         {/* Google Analytics 4 */}
