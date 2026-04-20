@@ -6,11 +6,28 @@ import { generateWebsiteJsonLd } from '../utils/seo'
 
 export const indexRoute = new Hono<{ Bindings: Env }>()
 
+const PAGE_SIZE = 20
+
 indexRoute.get('/', async (c) => {
   const repo = new ArticleRepository(c.env.DB)
   const category = c.req.query('category')
-  const articles = await repo.list({ published: true, limit: 20, category })
-  const categories = await repo.getCategories()
+  const page = Math.max(1, parseInt(c.req.query('page') || '1'))
+  const offset = (page - 1) * PAGE_SIZE
+
+  const [articles, total, categories] = await Promise.all([
+    repo.list({ published: true, limit: PAGE_SIZE, offset, category }),
+    repo.count({ published: true, category }),
+    repo.getCategories()
+  ])
+
+  const totalPages = Math.ceil(total / PAGE_SIZE)
+
+  const buildUrl = (p: number) => {
+    const params = new URLSearchParams()
+    if (category) params.set('category', category)
+    params.set('page', String(p))
+    return `/?${params.toString()}`
+  }
 
   const siteUrl = 'https://isk.masa86.com'
   const jsonLd = generateWebsiteJsonLd(siteUrl)
@@ -33,13 +50,13 @@ indexRoute.get('/', async (c) => {
         </div>
       </div>
 
-      <h2>最新記事</h2>
+      <h2>{category ? `カテゴリ: ${category}` : '最新記事'}</h2>
 
       {categories.length > 0 && (
         <div style="margin: 20px 0;">
           <strong>カテゴリ: </strong>
           {categories.map(cat => (
-            <a href={`/?category=${cat}`} class="category">{cat}</a>
+            <a href={`/?category=${encodeURIComponent(cat)}`} class="category">{cat}</a>
           ))}
         </div>
       )}
@@ -47,6 +64,11 @@ indexRoute.get('/', async (c) => {
       <div class="article-grid">
         {articles.map(article => (
           <div class="article-card">
+            {article.image_url && (
+              <a href={`/articles/${article.slug}`} class="article-card-thumb">
+                <img src={article.image_url} alt={article.title} loading="lazy" />
+              </a>
+            )}
             <h3>
               <a href={`/articles/${article.slug}`}>{article.title}</a>
             </h3>
@@ -60,8 +82,14 @@ indexRoute.get('/', async (c) => {
         ))}
       </div>
 
-      {articles.length === 0 && (
-        <p>記事がまだありません。</p>
+      {articles.length === 0 && <p>記事がまだありません。</p>}
+
+      {totalPages > 1 && (
+        <div class="pagination">
+          {page > 1 && <a href={buildUrl(page - 1)} class="pagination-btn">← 前へ</a>}
+          <span class="pagination-info">{page} / {totalPages}</span>
+          {page < totalPages && <a href={buildUrl(page + 1)} class="pagination-btn">次へ →</a>}
+        </div>
       )}
     </Layout>
   )

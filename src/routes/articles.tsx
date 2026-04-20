@@ -12,24 +12,28 @@ const md = new MarkdownIt({
   typographer: true
 })
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
 // mermaidコードブロックをdivに変換
-const defaultFenceRender = md.renderer.rules.fence || function (tokens, idx, options, env, self) {
+const defaultFenceRender = md.renderer.rules.fence || function (tokens, idx, options, _env, self) {
   return self.renderToken(tokens, idx, options)
 }
-md.renderer.rules.fence = function (tokens, idx, options, env, self) {
+md.renderer.rules.fence = function (tokens, idx, options, _env, self) {
   const token = tokens[idx]
   if (token.info.trim() === 'mermaid') {
-    return `<div class="mermaid">${token.content}</div>`
+    return `<div class="mermaid">${escapeHtml(token.content)}</div>`
   }
-  return defaultFenceRender(tokens, idx, options, env, self)
+  return defaultFenceRender(tokens, idx, options, _env, self)
 }
 
 // 外部リンクを別タブで開くように設定
-const defaultRender = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
+const defaultRender = md.renderer.rules.link_open || function (tokens, idx, options, _env, self) {
   return self.renderToken(tokens, idx, options)
 }
 
-md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+md.renderer.rules.link_open = function (tokens, idx, options, _env, self) {
   const token = tokens[idx]
   const hrefIndex = token.attrIndex('href')
 
@@ -42,28 +46,44 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
     }
   }
 
-  return defaultRender(tokens, idx, options, env, self)
+  return defaultRender(tokens, idx, options, _env, self)
 }
 
 export const articlesRoute = new Hono<{ Bindings: Env }>()
+
+const PAGE_SIZE = 20
 
 // 記事一覧
 articlesRoute.get('/', async (c) => {
   const repo = new ArticleRepository(c.env.DB)
   const category = c.req.query('category')
-  const tag = c.req.query('tag')
+  const tagFilter = c.req.query('tag')
   const q = c.req.query('q')
+  const page = Math.max(1, parseInt(c.req.query('page') || '1'))
+  const offset = (page - 1) * PAGE_SIZE
 
-  // タグでフィルタリング
   let articles = await repo.list({
     published: true,
     category,
     q,
-    limit: 50
+    limit: tagFilter ? 200 : PAGE_SIZE,
+    offset: tagFilter ? 0 : offset
   })
 
-  if (tag) {
-    articles = articles.filter(article => article.tags && article.tags.includes(tag))
+  if (tagFilter) {
+    articles = articles.filter(a => a.tags && a.tags.includes(tagFilter))
+  }
+
+  const total = tagFilter ? articles.length : await repo.count({ published: true, category })
+  const totalPages = Math.ceil(total / PAGE_SIZE)
+
+  const buildUrl = (p: number) => {
+    const params = new URLSearchParams()
+    if (category) params.set('category', category)
+    if (tagFilter) params.set('tag', tagFilter)
+    if (q) params.set('q', q)
+    params.set('page', String(p))
+    return `/articles?${params.toString()}`
   }
 
   return c.html(
@@ -89,8 +109,8 @@ articlesRoute.get('/', async (c) => {
             {article.excerpt && <p>{article.excerpt}</p>}
             <div class="article-meta">
               {article.category && <span class="category">{article.category}</span>}
-              {article.tags && article.tags.map(tag => (
-                <a href={`/articles?tag=${tag}`} class="tag">#{tag}</a>
+              {article.tags && article.tags.map(t => (
+                <a href={`/articles?tag=${t}`} class="tag">#{t}</a>
               ))}
               {article.audio_url && <span>🎧</span>}
               <div>{new Date(article.created_at).toLocaleDateString('ja-JP')}</div>
@@ -100,6 +120,14 @@ articlesRoute.get('/', async (c) => {
       </div>
 
       {articles.length === 0 && <p>記事が見つかりません。</p>}
+
+      {totalPages > 1 && (
+        <div class="pagination">
+          {page > 1 && <a href={buildUrl(page - 1)} class="pagination-btn">← 前へ</a>}
+          <span class="pagination-info">{page} / {totalPages}</span>
+          {page < totalPages && <a href={buildUrl(page + 1)} class="pagination-btn">次へ →</a>}
+        </div>
+      )}
     </Layout>
   )
 })

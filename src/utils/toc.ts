@@ -10,12 +10,16 @@ export type TOCItem = {
 export function extractHeadings(html: string): TOCItem[] {
   const headingRegex = /<h([2-4])[^>]*>(.*?)<\/h\1>/gi
   const items: TOCItem[] = []
+  const idCount: Record<string, number> = {}
   let match
 
   while ((match = headingRegex.exec(html)) !== null) {
     const level = parseInt(match[1])
-    const text = match[2].replace(/<[^>]*>/g, '').trim() // タグを除去
-    const id = generateId(text)
+    const text = match[2].replace(/<[^>]*>/g, '').trim()
+    const baseId = generateId(text)
+    const count = idCount[baseId] ?? 0
+    const id = count === 0 ? baseId : `${baseId}-${count}`
+    idCount[baseId] = count + 1
 
     items.push({ id, text, level })
   }
@@ -39,9 +43,13 @@ export function generateId(text: string): string {
  * Markdown HTMLに見出しIDを自動挿入
  */
 export function addHeadingIds(html: string): string {
-  return html.replace(/<h([2-4])>(.*?)<\/h\1>/gi, (match, level, content) => {
+  const idCount: Record<string, number> = {}
+  return html.replace(/<h([2-4])>(.*?)<\/h\1>/gi, (_match, level, content) => {
     const text = content.replace(/<[^>]*>/g, '').trim()
-    const id = generateId(text)
+    const baseId = generateId(text)
+    const count = idCount[baseId] ?? 0
+    const id = count === 0 ? baseId : `${baseId}-${count}`
+    idCount[baseId] = count + 1
     return `<h${level} id="${id}">${content}</h${level}>`
   })
 }

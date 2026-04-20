@@ -160,6 +160,24 @@ export class ArticleRepository {
     }
   }
 
+  // 記事数を取得（ページネーション用）
+  async count(params: Pick<ArticleSearchParams, 'published' | 'category'> = {}): Promise<number> {
+    let query = 'SELECT COUNT(*) as cnt FROM articles WHERE 1=1'
+    const bindings: (string | number)[] = []
+
+    if (params.published !== undefined) {
+      query += ' AND published = ?'
+      bindings.push(params.published ? 1 : 0)
+    }
+    if (params.category) {
+      query += ' AND category = ?'
+      bindings.push(params.category)
+    }
+
+    const result = await this.db.prepare(query).bind(...bindings).first<{ cnt: number }>()
+    return result?.cnt ?? 0
+  }
+
   // カテゴリ一覧を取得
   async getCategories(): Promise<string[]> {
     const result = await this.db.prepare(`
