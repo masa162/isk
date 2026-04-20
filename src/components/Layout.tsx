@@ -40,7 +40,7 @@ export const Layout: FC<LayoutProps> = ({
 
   return (
     <>
-    {'<!DOCTYPE html>'}
+    {raw('<!DOCTYPE html>')}
     <html lang="ja">
       <head>
         <meta charset="UTF-8" />
