@@ -1,4 +1,4 @@
-name = "iskn"
+name = "isk"
 compatibility_date = "2024-11-23"
 main = "src/index.tsx"
 
