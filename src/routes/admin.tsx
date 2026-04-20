@@ -150,6 +150,12 @@ adminRoute.get('/articles/new', (c) => {
             </div>
 
             <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">アイキャッチ画像URL</label>
+              <input type="text" name="image_url" placeholder="https://img.tokyo86.com/xxxxx/001.webp" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+              <small style="color: #666;">16:9推奨。OGP・カードサムネに使用されます</small>
+            </div>
+
+            <div style="margin-bottom: 20px;">
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">音声ファイルURL</label>
               <input type="text" name="audio_url" placeholder="/audio/filename.mp3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
             </div>
@@ -191,6 +197,7 @@ adminRoute.post('/articles', async (c) => {
     category: formData.category ? String(formData.category) : undefined,
     tags,
     audio_url: formData.audio_url ? String(formData.audio_url) : undefined,
+    image_url: formData.image_url ? String(formData.image_url) : undefined,
     published: formData.published === '1' ? 1 : 0
   })
 
@@ -274,6 +281,12 @@ adminRoute.get('/articles/:id/edit', async (c) => {
             </div>
 
             <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">アイキャッチ画像URL</label>
+              <input type="text" name="image_url" value="${article.image_url || ''}" placeholder="https://img.tokyo86.com/xxxxx/001.webp" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+              <small style="color: #666;">16:9推奨。OGP・カードサムネに使用されます</small>
+            </div>
+
+            <div style="margin-bottom: 20px;">
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">音声ファイルURL</label>
               <input type="text" name="audio_url" value="${article.audio_url || ''}" placeholder="/audio/filename.mp3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
             </div>
@@ -316,6 +329,7 @@ adminRoute.post('/articles/:id', async (c) => {
     category: formData.category ? String(formData.category) : undefined,
     tags,
     audio_url: formData.audio_url ? String(formData.audio_url) : undefined,
+    image_url: formData.image_url ? String(formData.image_url) : undefined,
     published: formData.published === '1' ? 1 : 0
   })
 

@@ -12,6 +12,18 @@ const md = new MarkdownIt({
   typographer: true
 })
 
+// mermaidコードブロックをdivに変換
+const defaultFenceRender = md.renderer.rules.fence || function (tokens, idx, options, env, self) {
+  return self.renderToken(tokens, idx, options)
+}
+md.renderer.rules.fence = function (tokens, idx, options, env, self) {
+  const token = tokens[idx]
+  if (token.info.trim() === 'mermaid') {
+    return `<div class="mermaid">${token.content}</div>`
+  }
+  return defaultFenceRender(tokens, idx, options, env, self)
+}
+
 // 外部リンクを別タブで開くように設定
 const defaultRender = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
   return self.renderToken(tokens, idx, options)
@@ -66,6 +78,11 @@ articlesRoute.get('/', async (c) => {
       <div class="article-grid">
         {articles.map(article => (
           <div class="article-card">
+            {article.image_url && (
+              <a href={`/articles/${article.slug}`} class="article-card-thumb">
+                <img src={article.image_url} alt={article.title} loading="lazy" />
+              </a>
+            )}
             <h3>
               <a href={`/articles/${article.slug}`}>{article.title}</a>
             </h3>
@@ -111,6 +128,7 @@ articlesRoute.get('/:slug', async (c) => {
   const articleUrl = `${siteUrl}/articles/${article.slug}`
   const description = truncateDescription(article.excerpt || article.title)
   const jsonLd = generateArticleJsonLd(article, siteUrl)
+  const ogImage = article.image_url || 'https://isk.masa86.com/og-default.png'
 
   return c.html(
     <Layout
@@ -120,6 +138,7 @@ articlesRoute.get('/:slug', async (c) => {
       description={description}
       url={articleUrl}
       type="article"
+      ogImage={ogImage}
       publishedTime={article.created_at}
       modifiedTime={article.updated_at}
       jsonLd={jsonLd}
@@ -134,7 +153,7 @@ articlesRoute.get('/:slug', async (c) => {
             month: 'long',
             day: 'numeric'
           })}</time>
-          {article.category && <span class="category">{article.category}</span>}
+          {article.category && <a href={`/articles?category=${encodeURIComponent(article.category)}`} class="category">{article.category}</a>}
           {article.tags && article.tags.map(tag => (
             <a href={`/articles?tag=${tag}`} class="tag">#{tag}</a>
           ))}

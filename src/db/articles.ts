@@ -66,8 +66,8 @@ export class ArticleRepository {
     const tagsJson = input.tags ? JSON.stringify(input.tags) : null
 
     const result = await this.db.prepare(`
-      INSERT INTO articles (title, slug, content, excerpt, category, tags, audio_url, published)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO articles (title, slug, content, excerpt, category, tags, audio_url, image_url, published)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       input.title,
       input.slug,
@@ -76,6 +76,7 @@ export class ArticleRepository {
       input.category || null,
       tagsJson,
       input.audio_url || null,
+      input.image_url || null,
       input.published
     ).run()
 
@@ -122,6 +123,10 @@ export class ArticleRepository {
     if (input.audio_url !== undefined) {
       fields.push('audio_url = ?')
       bindings.push(input.audio_url || null)
+    }
+    if (input.image_url !== undefined) {
+      fields.push('image_url = ?')
+      bindings.push(input.image_url || null)
     }
     if (input.published !== undefined) {
       fields.push('published = ?')

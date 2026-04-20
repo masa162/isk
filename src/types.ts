@@ -19,6 +19,7 @@ export type Article = {
   category?: string
   tags?: string[]
   audio_url?: string
+  image_url?: string
   published: number
   created_at: string
   updated_at: string
