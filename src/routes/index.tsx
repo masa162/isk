@@ -34,7 +34,7 @@ indexRoute.get('/', async (c) => {
 
   return c.html(
     <Layout
-      title="ホーム"
+      title="医スク！"
       description="薬剤師による医学記事解説 + Podcast。エビデンスに基づいた分かりやすい医学情報をお届けします。"
       url={siteUrl}
       jsonLd={jsonLd}

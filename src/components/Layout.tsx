@@ -26,7 +26,7 @@ export const Layout: FC<LayoutProps> = ({
   showTOC = false,
   tocItems = [],
   description = '薬剤師による医学記事解説 + Podcast',
-  ogImage = 'https://isk.masa86.com/og-default.png',
+  ogImage = 'https://img.tokyo86.com/b8b198.webp',
   url = 'https://isk.masa86.com',
   type = 'website',
   publishedTime,
@@ -35,7 +35,7 @@ export const Layout: FC<LayoutProps> = ({
   ga4MeasurementId,
   hideSidebar = false
 }) => {
-  const fullTitle = `${title} - 医スク！`
+  const fullTitle = title === '医スク！' ? '医スク！ | 薬剤師による医学記事解説 + Podcast' : `${title} - 医スク！`
   const jsonLdString = jsonLd ? JSON.stringify(jsonLd) : ''
 
   return (
@@ -75,6 +75,7 @@ export const Layout: FC<LayoutProps> = ({
           <script type="application/ld+json">{raw(jsonLdString)}</script>
         )}
 
+        <link rel="canonical" href={url} />
         <link rel="stylesheet" href="/styles.css" />
         <link rel="icon" href="/favicon.ico" />
 

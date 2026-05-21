@@ -61,6 +61,22 @@ export class ArticleRepository {
     return result.results.map(row => this.rowToArticle(row))
   }
 
+  // 同カテゴリの前後記事を取得
+  async getAdjacentInCategory(articleId: number, category: string): Promise<{ prev: Article | null, next: Article | null }> {
+    const [prevRow, nextRow] = await Promise.all([
+      this.db.prepare(
+        `SELECT * FROM articles WHERE published = 1 AND category = ? AND id < ? ORDER BY id DESC LIMIT 1`
+      ).bind(category, articleId).first<ArticleRow>(),
+      this.db.prepare(
+        `SELECT * FROM articles WHERE published = 1 AND category = ? AND id > ? ORDER BY id ASC LIMIT 1`
+      ).bind(category, articleId).first<ArticleRow>(),
+    ])
+    return {
+      prev: prevRow ? this.rowToArticle(prevRow) : null,
+      next: nextRow ? this.rowToArticle(nextRow) : null,
+    }
+  }
+
   // 記事を作成
   async create(input: ArticleInput): Promise<Article> {
     const tagsJson = input.tags ? JSON.stringify(input.tags) : null
@@ -187,5 +203,47 @@ export class ArticleRepository {
     `).all<{ category: string }>()
 
     return result.results.map(r => r.category)
+  }
+
+  // タグが重なる関連記事を取得
+  async getRelatedByTags(articleId: number, tags: string[], limit = 3): Promise<Article[]> {
+    if (!tags.length) return []
+    const all = await this.db.prepare(
+      `SELECT * FROM articles WHERE published = 1 AND id != ? AND tags IS NOT NULL ORDER BY created_at DESC LIMIT 100`
+    ).bind(articleId).all<ArticleRow>()
+
+    // タグの一致数でスコアリング
+    const scored = all.results
+      .map(row => {
+        let articleTags: string[] = []
+        try { articleTags = JSON.parse(row.tags || '[]') } catch {}
+        const score = tags.filter(t => articleTags.includes(t)).length
+        return { row, score }
+      })
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+
+    return scored.map(({ row }) => this.rowToArticle(row))
+  }
+
+  // タグ一覧（使用数付き）
+  async getTagsWithCount(): Promise<{ tag: string; count: number }[]> {
+    const result = await this.db.prepare(
+      `SELECT tags FROM articles WHERE published = 1 AND tags IS NOT NULL`
+    ).all<{ tags: string }>()
+
+    const counts: Record<string, number> = {}
+    for (const row of result.results) {
+      try {
+        const tags: string[] = JSON.parse(row.tags)
+        for (const tag of tags) {
+          if (tag) counts[tag] = (counts[tag] || 0) + 1
+        }
+      } catch {}
+    }
+    return Object.entries(counts)
+      .map(([tag, count]) => ({ tag, count }))
+      .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag, 'ja'))
   }
 }

@@ -7,6 +7,8 @@ import { articlesRoute } from './routes/articles'
 import { feedRoute } from './routes/feed'
 import { staticRoute } from './routes/static'
 import { adminRoute } from './routes/admin'
+import { apiRoute } from './routes/api'
+import { tagsRoute } from './routes/tags'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -19,6 +21,8 @@ app.route('/', indexRoute)
 app.route('/articles', articlesRoute)
 app.route('/feed.xml', feedRoute)
 app.route('/admin', adminRoute)
+app.route('/api', apiRoute)
+app.route('/tags', tagsRoute)
 app.route('/', staticRoute)
 
 export default app

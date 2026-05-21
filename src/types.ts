@@ -7,6 +7,7 @@ export type Env = {
   GA4_MEASUREMENT_ID: string
   ADMIN_USERNAME: string
   ADMIN_PASSWORD: string
+  API_TOKEN: string
 }
 
 // 記事の型定義

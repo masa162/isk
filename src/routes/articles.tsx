@@ -98,11 +98,14 @@ articlesRoute.get('/', async (c) => {
       <div class="article-grid">
         {articles.map(article => (
           <div class="article-card">
-            {article.image_url && (
-              <a href={`/articles/${article.slug}`} class="article-card-thumb">
-                <img src={article.image_url} alt={article.title} loading="lazy" />
+            <a href={`/articles/${article.slug}`} class="article-card-thumb">
+                <img
+                  src={article.image_url || 'https://img.tokyo86.com/7cccfc.webp'}
+                  alt={article.title}
+                  loading="lazy"
+                  onerror="this.src='https://img.tokyo86.com/7cccfc.webp'"
+                />
               </a>
-            )}
             <h3>
               <a href={`/articles/${article.slug}`}>{article.title}</a>
             </h3>
@@ -154,12 +157,22 @@ articlesRoute.get('/:slug', async (c) => {
   // 目次を抽出
   const tocItems = extractHeadings(htmlContent)
 
+  // 同カテゴリの前後記事
+  const adjacent = article.category
+    ? await repo.getAdjacentInCategory(article.id, article.category)
+    : { prev: null, next: null }
+
+  // タグベース関連記事
+  const related = article.tags?.length
+    ? await repo.getRelatedByTags(article.id, article.tags, 3)
+    : []
+
   // SEO設定
   const siteUrl = 'https://isk.masa86.com'
   const articleUrl = `${siteUrl}/articles/${article.slug}`
   const description = truncateDescription(article.excerpt || article.title)
   const jsonLd = generateArticleJsonLd(article, siteUrl)
-  const ogImage = article.image_url || 'https://isk.masa86.com/og-default.png'
+  const ogImage = article.image_url || 'https://img.tokyo86.com/b8b198.webp'
 
   return c.html(
     <Layout
@@ -208,8 +221,69 @@ articlesRoute.get('/:slug', async (c) => {
 
         <div class="prose" dangerouslySetInnerHTML={{ __html: htmlContent }}></div>
 
-        <div style="margin-top: 40px; text-align: center;">
-          <a href="/" style="color: #0066cc; text-decoration: none;">← 記事一覧に戻る</a>
+        {related.length > 0 && (
+          <div style="margin-top: 48px; border-top: 1px solid #eee; padding-top: 24px;">
+            <p style="font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">
+              🔗 関連記事
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
+              {related.map(r => (
+                <a href={`/articles/${r.slug}`} style="display: block; text-decoration: none; color: #333; border: 1px solid #eee; border-radius: 8px; overflow: hidden; transition: box-shadow 0.15s;"
+                  onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'"
+                  onmouseout="this.style.boxShadow=''"
+                >
+                  <img
+                    src={r.image_url || 'https://img.tokyo86.com/b8b198.webp'}
+                    alt={r.title}
+                    style="width: 100%; height: 80px; object-fit: cover; display: block;"
+                    onerror="this.src='https://img.tokyo86.com/7cccfc.webp'"
+                  />
+                  <div style="padding: 8px 10px;">
+                    {r.category && <span style="font-size: 10px; color: #888;">{r.category}</span>}
+                    <div style="font-size: 12px; line-height: 1.5; margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                      {r.title}
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {(adjacent.prev || adjacent.next) && (
+          <div style="margin-top: 48px; border-top: 1px solid #eee; padding-top: 24px;">
+            <p style="font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">
+              {article.category} の他の記事
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              {adjacent.prev ? (
+                <a href={`/articles/${adjacent.prev.slug}`} style="display: block; padding: 12px; border: 1px solid #eee; border-radius: 8px; text-decoration: none; color: #333;">
+                  <div style="font-size: 11px; color: #999; margin-bottom: 6px;">← 前の記事</div>
+                  {adjacent.prev.image_url && (
+                    <img src={adjacent.prev.image_url} style="width: 100%; height: 60px; object-fit: cover; border-radius: 4px; margin-bottom: 6px;" />
+                  )}
+                  <div style="font-size: 12px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                    {adjacent.prev.title}
+                  </div>
+                </a>
+              ) : <div />}
+              {adjacent.next ? (
+                <a href={`/articles/${adjacent.next.slug}`} style="display: block; padding: 12px; border: 1px solid #eee; border-radius: 8px; text-decoration: none; color: #333; text-align: right;">
+                  <div style="font-size: 11px; color: #999; margin-bottom: 6px;">次の記事 →</div>
+                  {adjacent.next.image_url && (
+                    <img src={adjacent.next.image_url} style="width: 100%; height: 60px; object-fit: cover; border-radius: 4px; margin-bottom: 6px;" />
+                  )}
+                  <div style="font-size: 12px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                    {adjacent.next.title}
+                  </div>
+                </a>
+              ) : <div />}
+            </div>
+          </div>
+        )}
+
+        <div style="margin-top: 24px; text-align: center;">
+          <a href="/articles" style="color: #0066cc; text-decoration: none;">← 記事一覧に戻る</a>
         </div>
       </article>
     </Layout>
