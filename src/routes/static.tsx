@@ -17,6 +17,12 @@ staticRoute.get('/profile', (c) => {
       <div class="prose">
         <h1>身体というシステムを、「デバッグ」する。</h1>
 
+        <img
+          src="https://img.tokyo86.com/k0yacj/002.webp"
+          alt="中山正之 プロフィール写真"
+          class="w-32 h-32 rounded-full object-cover float-right ml-6 mb-4 border border-gray-200 shadow-sm"
+        />
+
         <h2>中山 正之 (Nakayama Masayuki)</h2>
         <p><strong>薬剤師 / メディカルライター / 健康戦略コンサルタント</strong></p>
 
@@ -24,6 +30,8 @@ staticRoute.get('/profile', (c) => {
         <p>「論理（エビデンス）」と「直感（漢方・イラスト）」の両輪で、働き盛りの身体を最適化する専門家。</p>
 
         <p>元システムエンジニアという異色の経歴を持ち、人体のメカニズムを「複雑なシステム」として捉え直す独自のアプローチで、慢性疲労や不調に悩むビジネスパーソンの「健康のボトルネック」を解消しています。</p>
+
+        <div class="clear-both"></div>
 
         <hr />
 
@@ -93,6 +101,23 @@ staticRoute.get('/profile', (c) => {
         <p><strong>「診断」ではなく「戦略」を。</strong><br />
           病院に行くほどではないけれど、パフォーマンスが上がらない。<br />
           そんなあなたの「取扱説明書」を一緒に作りましょう。</p>
+
+        <hr />
+
+        <h3>■ おまけ（別アングル）</h3>
+        <p>新宿での撮影時の別カットです。気分やシチュエーションに合わせて使い分ける予定のものです。</p>
+        <div class="flex flex-wrap gap-4 mt-6">
+          <img
+            src="https://img.tokyo86.com/k0yacj/003.webp"
+            alt="中山正之 プロフィール別カット1"
+            class="w-full sm:w-[calc(50%-8px)] rounded-lg object-cover shadow-sm border border-gray-200"
+          />
+          <img
+            src="https://img.tokyo86.com/k0yacj/004.webp"
+            alt="中山正之 プロフィール別カット2"
+            class="w-full sm:w-[calc(50%-8px)] rounded-lg object-cover shadow-sm border border-gray-200"
+          />
+        </div>
       </div>
     </Layout>
   )
