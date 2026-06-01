@@ -20,7 +20,7 @@ staticRoute.get('/profile', (c) => {
         <img
           src="https://img.tokyo86.com/k0yacj/002.webp"
           alt="中山正之 プロフィール写真"
-          class="w-32 h-32 rounded-full object-cover float-right ml-6 mb-4 border border-gray-200 shadow-sm"
+          class="w-32 h-32 rounded-lg object-cover float-right ml-6 mb-4 border border-gray-200 shadow-sm"
         />
 
         <h2>中山 正之 (Nakayama Masayuki)</h2>
@@ -104,8 +104,6 @@ staticRoute.get('/profile', (c) => {
 
         <hr />
 
-        <h3>■ おまけ（別アングル）</h3>
-        <p>新宿での撮影時の別カットです。気分やシチュエーションに合わせて使い分ける予定のものです。</p>
         <div class="flex flex-wrap gap-4 mt-6">
           <img
             src="https://img.tokyo86.com/k0yacj/003.webp"
